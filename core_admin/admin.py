@@ -1,3 +1,4 @@
 from django.contrib import admin
 
-# Register your models here.
+# El core_admin no registra modelos en el admin de Django
+# porque gestiona su propia interfaz administrativa a través de vistas personalizadas
