@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Configurar Recompensas - StreamPoint Admin{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-gradient mb-2">
+                        <i class="fas fa-cog me-2"></i>Configuración de Recompensas
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Ajusta los parámetros del sistema de cashback y puntos
+                    </p>
+                </div>
+                <a href="{% url 'admin_custom:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Formulario de configuración -->
+    <div class="col-lg-7 mb-4">
+        <div class="card-custom p-4">
+            <h4 class="mb-4">
+                <i class="fas fa-sliders-h me-2"></i>Parámetros del Sistema
+            </h4>
+
+            {% if config %}
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Puntos por peso -->
+                    <div class="mb-4">
+                        <label for="puntos_por_peso" class="form-label-custom">
+                            <i class="fas fa-coins me-2"></i>Puntos necesarios por cada peso COP
+                        </label>
+                        <input type="number" 
+                               class="form-control-custom" 
+                               id="puntos_por_peso"
+                               name="puntos_por_peso"
+                               value="{{ config.puntos_por_peso }}"
+                               min="1"
+                               required>
+                        <small class="text-muted d-block mt-1">
+                            Define cuántos puntos equivalen a $1 COP (Actualmente: {{ config.puntos_por_peso }} puntos = $1 COP)
+                        </small>
+                    </div>
+
+                    <!-- Mínimo de canje -->
+                    <div class="mb-4">
+                        <label for="puntos_minimos_canje" class="form-label-custom">
+                            <i class="fas fa-hand-holding-usd me-2"></i>Puntos mínimos para canjear
+                        </label>
+                        <input type="number" 
+                               class="form-control-custom" 
+                               id="puntos_minimos_canje"
+                               name="puntos_minimos_canje"
+                               value="{{ config.puntos_minimos_canje }}"
+                               min="1"
+                               required>
+                        <small class="text-muted d-block mt-1">
+                            Cantidad mínima de puntos que debe tener un usuario para poder canjearlos
+                        </small>
+                    </div>
+
+                    <!-- Última modificación -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Última modificación:</strong> {{ config.fecha_modificacion|date:"d/m/Y H:i" }}
+                    </div>
+
+                    <div class="alert alert-warning mb-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Importante:</strong> Los cambios afectarán a todas las futuras transacciones. 
+                        Los puntos ya otorgados no se verán afectados.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 btn-lg">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                    </button>
+                </form>
+            {% else %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Error:</strong> No se encontró configuración de recompensas. 
+                    Por favor, ejecuta las migraciones y el comando de poblar datos.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Historial de cambios (futuro) -->
+        <div class="card-custom p-4 mt-4">
+            <h5 class="mb-3">
+                <i class="fas fa-history me-2"></i>Historial de Cambios
+            </h5>
+            <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                Esta sección mostrará el historial de cambios en la configuración. 
+                Próximamente se implementará un registro de auditoría.
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista previa y calculadora -->
+    <div class="col-lg-5">
+        {% if config %}
+        <!-- Resumen actual -->
+        <div class="card-custom p-4 mb-4">
+            <h5 class="mb-4">
+                <i class="fas fa-info-circle me-2"></i>Configuración Actual
+            </h5>
+
+            <div class="mb-3 p-3" style="background: rgba(99, 102, 241, 0.05); border-radius: 10px;">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Conversión de puntos:</span>
+                    <strong id="currentConversion">{{ config.puntos_por_peso }} pts = $1</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Mínimo de canje:</span>
+                    <strong id="currentMinimo">{{ config.puntos_minimos_canje }} puntos</strong>
+                </div>
+            </div>
+
+            <div class="alert alert-success mb-0">
+                <small>
+                    Con {{ config.puntos_minimos_canje }} puntos, un usuario puede canjear 
+                    <strong>${{ config.puntos_minimos_canje|floatformat:0|divisibleby:config.puntos_por_peso }} COP</strong>
+                </small>
+            </div>
+        </div>
+
+        <!-- Calculadora -->
+        <div class="card-custom p-4 mb-4">
+            <h5 class="mb-4">
+                <i class="fas fa-calculator me-2"></i>Calculadora de Puntos
+            </h5>
+
+            <div class="mb-3">
+                <label for="calcPuntos" class="form-label-custom">
+                    Puntos:
+                </label>
+                <input type="number" 
+                       class="form-control-custom" 
+                       id="calcPuntos"
+                       placeholder="Ingresa cantidad de puntos"
+                       min="0">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Equivale a:</label>
+                <div class="p-3 text-center" style="background: rgba(245, 158, 11, 0.1); border-radius: 10px;">
+                    <h3 class="text-warning mb-0" id="resultadoPesos">$0</h3>
+                    <small class="text-muted">COP</small>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <label for="calcPesos" class="form-label-custom">
+                    Pesos COP:
+                </label>
+                <input type="number" 
+                       class="form-control-custom" 
+                       id="calcPesos"
+                       placeholder="Ingresa cantidad en pesos"
+                       min="0">
+            </div>
+
+            <div class="mb-0">
+                <label class="form-label-custom">Equivale a:</label>
+                <div class="p-3 text-center" style="background: rgba(99, 102, 241, 0.1); border-radius: 10px;">
+                    <h3 class="text-primary mb-0" id="resultadoPuntos">0</h3>
+                    <small class="text-muted">puntos</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ejemplos -->
+        <div class="card-custom p-4">
+            <h6 class="mb-3">
+                <i class="fas fa-lightbulb me-2"></i>Ejemplos
+            </h6>
+            <ul class="small text-muted mb-0">
+                <li class="mb-2">
+                    Una suscripción de $50,000 genera {{ 50000|floatformat:0|divisibleby:10 }} puntos en primera compra
+                </li>
+                <li class="mb-2">
+                    {{ config.puntos_minimos_canje }} puntos = ${{ config.puntos_minimos_canje|floatformat:0|divisibleby:config.puntos_por_peso }} COP de descuento
+                </li>
+                <li>
+                    Un usuario con 1000 puntos puede canjear ${{ 1000|floatformat:0|divisibleby:config.puntos_por_peso }} COP
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const puntosPorPeso = {{ config.puntos_por_peso|default:10 }};
+    
+    // Calculadora de puntos a pesos
+    document.getElementById('calcPuntos').addEventListener('input', function() {
+        const puntos = parseFloat(this.value) || 0;
+        const pesos = Math.floor(puntos / puntosPorPeso);
+        document.getElementById('resultadoPesos').textContent = '$' + pesos.toLocaleString('es-CO');
+    });
+    
+    // Calculadora de pesos a puntos
+    document.getElementById('calcPesos').addEventListener('input', function() {
+        const pesos = parseFloat(this.value) || 0;
+        const puntos = pesos * puntosPorPeso;
+        document.getElementById('resultadoPuntos').textContent = puntos.toLocaleString('es-CO');
+    });
+
+    // Actualizar vista previa al cambiar inputs del formulario
+    document.getElementById('puntos_por_peso').addEventListener('input', function() {
+        const valor = this.value;
+        document.getElementById('currentConversion').textContent = valor + ' pts = $1';
+    });
+
+    document.getElementById('puntos_minimos_canje').addEventListener('input', function() {
+        const valor = this.value;
+        document.getElementById('currentMinimo').textContent = valor + ' puntos';
+    });
+});
+</script>
+{% endblock %}

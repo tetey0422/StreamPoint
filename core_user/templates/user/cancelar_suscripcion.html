@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cancelar Suscripción - StreamPoint{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card-custom p-4">
+            <div class="text-center mb-4">
+                <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: var(--danger);"></i>
+                <h2 class="text-gradient mt-3">Cancelar Suscripción</h2>
+                <p class="text-muted">
+                    ¿Estás seguro de que deseas cancelar esta suscripción?
+                </p>
+            </div>
+
+            <!-- Información de la suscripción -->
+            <div class="alert alert-warning border-0 mb-4">
+                <h5 class="alert-heading">
+                    <i class="fas fa-info-circle me-2"></i>Información de la Suscripción
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Servicio:</strong> {{ suscripcion.plan.servicio.nombre }}</p>
+                        <p class="mb-1"><strong>Plan:</strong> {{ suscripcion.plan.nombre }}</p>
+                        <p class="mb-0"><strong>Email:</strong> {{ suscripcion.email_servicio }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Fecha inicio:</strong> {{ suscripcion.fecha_inicio|date:"d/m/Y" }}</p>
+                        <p class="mb-1"><strong>Vencimiento:</strong> {{ suscripcion.fecha_vencimiento|date:"d/m/Y" }}</p>
+                        <p class="mb-0"><strong>Días restantes:</strong> {{ suscripcion.dias_restantes }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advertencias -->
+            <div class="mb-4">
+                <h5 class="text-danger mb-3">
+                    <i class="fas fa-exclamation-circle me-2"></i>Antes de cancelar, ten en cuenta:
+                </h5>
+                <ul class="text-muted">
+                    <li class="mb-2">
+                        <strong>Perderás acceso al servicio</strong> una vez cancelada la suscripción
+                    </li>
+                    <li class="mb-2">
+                        Los <strong>{{ suscripcion.dias_restantes }} días restantes</strong> de tu suscripción no serán reembolsados
+                    </li>
+                    <li class="mb-2">
+                        Los <strong>puntos ya ganados se mantendrán</strong> en tu cuenta
+                    </li>
+                    <li class="mb-2">
+                        Podrás volver a suscribirte en cualquier momento
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Alternativas -->
+            <div class="card mb-4" style="background: rgba(99, 102, 241, 0.05); border: none;">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-lightbulb me-2 text-primary"></i>¿Consideraste estas alternativas?
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-white rounded">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-pause-circle me-2"></i>Pausar Temporalmente
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Puedes dejar vencer la suscripción y reactivarla cuando lo necesites
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-white rounded">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-exchange-alt me-2"></i>Cambiar de Plan
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Tal vez un plan más económico se ajuste mejor a tu presupuesto
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de cancelación -->
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="motivo" class="form-label-custom">
+                        <i class="fas fa-comment me-2"></i>¿Por qué cancelas? (Opcional)
+                    </label>
+                    <textarea class="form-control-custom" 
+                              id="motivo" 
+                              name="motivo" 
+                              rows="3"
+                              placeholder="Ayúdanos a mejorar contándonos el motivo de tu cancelación..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               id="confirmo_cancelacion" 
+                               required>
+                        <label class="form-check-label" for="confirmo_cancelacion">
+                            Confirmo que deseo cancelar esta suscripción y entiendo que perderé el acceso al servicio
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <a href="{% url 'user:dashboard' %}" class="btn btn-outline-secondary flex-grow-1">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-danger flex-grow-1">
+                        <i class="fas fa-times-circle me-2"></i>Confirmar Cancelación
+                    </button>
+                </div>
+            </form>
+
+            <!-- Info adicional -->
+            <div class="mt-4 text-center">
+                <p class="small text-muted mb-2">
+                    <i class="fas fa-headset me-1"></i>
+                    ¿Necesitas ayuda? Contáctanos antes de cancelar
+                </p>
+                <a href="#" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-envelope me-2"></i>Contactar Soporte
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const checkbox = document.getElementById('confirmo_cancelacion');
+    
+    form.addEventListener('submit', function(e) {
+        if (!checkbox.checked) {
+            e.preventDefault();
+            alert('Debes confirmar que deseas cancelar la suscripción');
+            return false;
+        }
+        
+        if (!confirm('¿Estás completamente seguro de que deseas cancelar esta suscripción?')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

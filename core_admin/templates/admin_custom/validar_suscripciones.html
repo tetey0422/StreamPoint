@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Validar Suscripciones - StreamPoint Admin{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-gradient mb-2">
+                        <i class="fas fa-check-double me-2"></i>Validar Suscripciones
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Revisa y aprueba las suscripciones pendientes
+                    </p>
+                </div>
+                <a href="{% url 'admin_custom:dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contador -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info border-0">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>{{ suscripciones.count }} suscripción{{ suscripciones.count|pluralize:"es" }} pendiente{{ suscripciones.count|pluralize }}</strong> de validación
+        </div>
+    </div>
+</div>
+
+<!-- Lista de suscripciones -->
+{% if suscripciones %}
+    <div class="row g-4">
+        {% for suscripcion in suscripciones %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>
+                            <i class="fas fa-clock me-2"></i>Pendiente
+                        </strong>
+                        <small>{{ suscripcion.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Usuario -->
+                    <div class="mb-3">
+                        <h5 class="mb-1">
+                            <i class="fas fa-user me-2 text-primary"></i>{{ suscripcion.usuario.username }}
+                        </h5>
+                        <small class="text-muted">{{ suscripcion.usuario.email }}</small>
+                    </div>
+
+                    <hr>
+
+                    <!-- Servicio y Plan -->
+                    <div class="mb-3">
+                        <h6 class="mb-2">
+                            <i class="fas fa-tv me-2"></i>{{ suscripcion.plan.servicio.nombre }}
+                        </h6>
+                        <p class="mb-1 small">
+                            <strong>Plan:</strong> {{ suscripcion.plan.nombre }}
+                        </p>
+                        <p class="mb-1 small">
+                            <strong>Duración:</strong> {{ suscripcion.plan.get_duracion_display }}
+                        </p>
+                        <p class="mb-0 small">
+                            <strong>Precio:</strong> ${{ suscripcion.monto_pagado|floatformat:0 }} COP
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <!-- Detalles -->
+                    <div class="mb-3">
+                        <p class="mb-1 small">
+                            <i class="fas fa-envelope me-2"></i>
+                            {{ suscripcion.email_servicio }}
+                        </p>
+                        <p class="mb-1 small">
+                            <i class="fas fa-credit-card me-2"></i>
+                            {{ suscripcion.get_metodo_pago_display }}
+                        </p>
+                        <p class="mb-1 small">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Inicio: {{ suscripcion.fecha_inicio|date:"d/m/Y" }}
+                        </p>
+                        <p class="mb-0 small">
+                            <i class="fas fa-calendar-times me-2"></i>
+                            Vence: {{ suscripcion.fecha_vencimiento|date:"d/m/Y" }}
+                        </p>
+                    </div>
+
+                    <!-- Puntos a otorgar -->
+                    <div class="alert alert-warning py-2 mb-3">
+                        <small class="mb-0">
+                            <i class="fas fa-star me-1"></i>
+                            {% if suscripcion.es_primera_compra %}
+                                <strong>Primera compra:</strong> {{ suscripcion.plan.puntos_primera_compra }} puntos
+                            {% else %}
+                                <strong>Renovación:</strong> {{ suscripcion.plan.puntos_renovacion }} puntos
+                            {% endif %}
+                        </small>
+                    </div>
+
+                    {% if suscripcion.notas %}
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <strong>Notas:</strong><br>
+                            {{ suscripcion.notas }}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'admin_custom:validar_suscripcion_accion' suscripcion.id %}" 
+                       class="btn btn-primary-custom w-100">
+                        <i class="fas fa-edit me-2"></i>Revisar y Decidir
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- Estado vacío -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card-custom text-center p-5">
+                <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--success); margin-bottom: 20px;"></i>
+                <h3 class="text-success mb-3">¡Todo al día!</h3>
+                <p class="text-muted mb-4">
+                    No hay suscripciones pendientes de validación en este momento
+                </p>
+                <a href="{% url 'admin_custom:dashboard' %}" class="btn btn-primary-custom">
+                    <i class="fas fa-tachometer-alt me-2"></i>Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

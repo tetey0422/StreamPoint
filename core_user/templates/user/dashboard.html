@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mi Dashboard - StreamPoint{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4 bg-gradient-primary text-white">
+            <h1 class="mb-2">
+                <i class="fas fa-tachometer-alt me-2"></i>¡Hola, {{ user.username }}!
+            </h1>
+            <p class="mb-0 opacity-75">
+                Gestiona tus suscripciones y aprovecha tus puntos
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-coins" style="font-size: 2.5rem; color: var(--warning);"></i>
+            </div>
+            <div class="stat-value">{{ perfil.puntos_disponibles }}</div>
+            <div class="stat-label">Puntos Disponibles</div>
+            <small class="text-muted d-block mt-2">
+                = ${{ perfil.puntos_disponibles|floatformat:0|divisibleby:10 }} COP
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-check-circle" style="font-size: 2.5rem; color: var(--success);"></i>
+            </div>
+            <div class="stat-value">{{ suscripciones_activas.count }}</div>
+            <div class="stat-label">Suscripciones Activas</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-star" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+            </div>
+            <div class="stat-value">{{ perfil.puntos_totales }}</div>
+            <div class="stat-label">Puntos Totales Ganados</div>
+        </div>
+    </div>
+</div>
+
+<!-- Suscripciones Pendientes -->
+{% if suscripciones_pendientes %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-warning border-0">
+            <h5 class="alert-heading">
+                <i class="fas fa-clock me-2"></i>Suscripciones Pendientes de Validación
+            </h5>
+            <p class="mb-3">
+                Tienes {{ suscripciones_pendientes.count }} suscripción{{ suscripciones_pendientes.count|pluralize:"es" }} 
+                esperando validación por parte de nuestro equipo. Esto suele tomar entre 24-48 horas.
+            </p>
+            {% for sus in suscripciones_pendientes %}
+            <div class="card mb-2">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ sus.plan.servicio.nombre }}</strong> - {{ sus.plan.nombre }}
+                            <br>
+                            <small class="text-muted">
+                                Solicitada: {{ sus.fecha_creacion|date:"d/m/Y H:i" }}
+                            </small>
+                        </div>
+                        <span class="badge bg-warning">
+                            <i class="fas fa-clock me-1"></i>Pendiente
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Suscripciones Activas -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="text-gradient mb-0">
+                    <i class="fas fa-play-circle me-2"></i>Mis Suscripciones Activas
+                </h3>
+                <a href="{% url 'public:catalogo' %}" class="btn btn-primary-custom">
+                    <i class="fas fa-plus me-2"></i>Nueva Suscripción
+                </a>
+            </div>
+
+            {% if suscripciones_activas %}
+                <div class="row g-3">
+                    {% for suscripcion in suscripciones_activas %}
+                    <div class="col-md-6">
+                        <div class="suscription-item">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="mb-1">{{ suscripcion.plan.servicio.nombre }}</h5>
+                                    <p class="text-muted mb-0 small">{{ suscripcion.plan.nombre }} - {{ suscripcion.plan.get_duracion_display }}</p>
+                                </div>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>Activa
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="text-muted">Progreso</span>
+                                    <span class="text-muted">{{ suscripcion.dias_restantes }} días restantes</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    {% widthratio suscripcion.dias_restantes suscripcion.plan.get_duracion_dias 100 as progress %}
+                                    <div class="progress-bar bg-success" style="width: {{ progress }}%"></div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 small text-muted mb-3">
+                                <div class="col-6">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    Inicio: {{ suscripcion.fecha_inicio|date:"d/m/Y" }}
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-calendar-times me-1"></i>
+                                    Vence: {{ suscripcion.fecha_vencimiento|date:"d/m/Y" }}
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    {{ suscripcion.email_servicio }}
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-star text-warning me-1"></i>
+                                    {{ suscripcion.puntos_otorgados }} puntos ganados
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'user:renovar_suscripcion' suscripcion.id %}" 
+                                   class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-redo me-1"></i>Renovar
+                                </a>
+                                <a href="{% url 'user:cancelar_suscripcion' suscripcion.id %}" 
+                                   class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-times me-1"></i>Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox" style="font-size: 4rem; color: var(--text-light); margin-bottom: 20px;"></i>
+                    <h4 class="text-muted">No tienes suscripciones activas</h4>
+                    <p class="text-muted mb-4">
+                        Explora nuestro catálogo y empieza a acumular puntos con tu primera suscripción
+                    </p>
+                    <a href="{% url 'public:catalogo' %}" class="btn btn-primary-custom">
+                        <i class="fas fa-th me-2"></i>Ver Catálogo
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Historial de Puntos -->
+<div class="row">
+    <div class="col-12">
+        <div class="card-custom p-4">
+            <h3 class="text-gradient mb-4">
+                <i class="fas fa-history me-2"></i>Historial de Puntos
+            </h3>
+
+            {% if historial_puntos %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th class="text-end">Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaccion in historial_puntos %}
+                            <tr>
+                                <td>{{ transaccion.fecha|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if transaccion.tipo == 'ganado' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-plus me-1"></i>Ganado
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-minus me-1"></i>Canjeado
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ transaccion.descripcion }}</td>
+                                <td class="text-end">
+                                    {% if transaccion.tipo == 'ganado' %}
+                                        <strong class="text-success">+{{ transaccion.cantidad }}</strong>
+                                    {% else %}
+                                        <strong class="text-danger">-{{ transaccion.cantidad }}</strong>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; color: var(--text-light); margin-bottom: 15px;"></i>
+                    <p class="text-muted mb-0">
+                        Aún no tienes transacciones de puntos. ¡Empieza comprando tu primera suscripción!
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Info sobre puntos -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card-custom p-4 bg-gradient-warning text-white">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-2">
+                        <i class="fas fa-lightbulb me-2"></i>¿Sabías que...?
+                    </h5>
+                    <p class="mb-0">
+                        Cada 10 puntos equivalen a $1 COP. Con tus {{ perfil.puntos_disponibles }} puntos disponibles, 
+                        puedes obtener hasta ${{ perfil.puntos_disponibles|floatformat:0|divisibleby:10 }} COP de descuento en tu próxima compra.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{% url 'public:catalogo' %}" class="btn btn-light">
+                        <i class="fas fa-shopping-cart me-2"></i>Canjear Puntos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

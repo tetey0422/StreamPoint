@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Panel de Administración - StreamPoint{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4 bg-gradient-primary text-white">
+            <h1 class="mb-2">
+                <i class="fas fa-tools me-2"></i>Panel de Administración
+            </h1>
+            <p class="mb-0 opacity-75">
+                Gestiona suscripciones, puntos y configuraciones del sistema
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-clock" style="font-size: 2.5rem; color: var(--warning);"></i>
+            </div>
+            <div class="stat-value">{{ suscripciones_pendientes }}</div>
+            <div class="stat-label">Suscripciones Pendientes</div>
+            <a href="{% url 'admin_custom:validar_suscripciones' %}" class="btn btn-sm btn-primary-custom mt-3">
+                <i class="fas fa-check me-1"></i>Validar Ahora
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-check-circle" style="font-size: 2.5rem; color: var(--success);"></i>
+            </div>
+            <div class="stat-value">{{ suscripciones_activas }}</div>
+            <div class="stat-label">Suscripciones Activas</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-users" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+            </div>
+            <div class="stat-value">{{ usuarios_registrados }}</div>
+            <div class="stat-label">Usuarios Registrados</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-stat-card">
+            <div class="stat-icon mb-3">
+                <i class="fas fa-coins" style="font-size: 2.5rem; color: var(--warning);"></i>
+            </div>
+            <div class="stat-value">{{ puntos_totales|floatformat:0 }}</div>
+            <div class="stat-label">Puntos en Sistema</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4">
+            <h3 class="text-gradient mb-4">
+                <i class="fas fa-bolt me-2"></i>Acciones Rápidas
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="{% url 'admin_custom:validar_suscripciones' %}" class="btn btn-outline-custom w-100 py-3">
+                        <i class="fas fa-check-double d-block mb-2" style="font-size: 2rem;"></i>
+                        <strong>Validar Suscripciones</strong>
+                        <small class="d-block text-muted mt-1">
+                            {{ suscripciones_pendientes }} pendiente{{ suscripciones_pendientes|pluralize }}
+                        </small>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'admin_custom:gestionar_puntos' %}" class="btn btn-outline-custom w-100 py-3">
+                        <i class="fas fa-coins d-block mb-2" style="font-size: 2rem;"></i>
+                        <strong>Gestionar Puntos</strong>
+                        <small class="d-block text-muted mt-1">Agregar o remover puntos</small>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'admin_custom:configurar_recompensas' %}" class="btn btn-outline-custom w-100 py-3">
+                        <i class="fas fa-cog d-block mb-2" style="font-size: 2rem;"></i>
+                        <strong>Configurar Sistema</strong>
+                        <small class="d-block text-muted mt-1">Ajustar recompensas</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Status -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card-custom p-4">
+            <h4 class="mb-4">
+                <i class="fas fa-chart-line me-2"></i>Estado del Sistema
+            </h4>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Suscripciones Procesadas</span>
+                    <strong class="text-success">98%</strong>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-success" style="width: 98%"></div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Puntos Distribuidos</span>
+                    <strong class="text-primary">{{ puntos_totales|floatformat:0 }}</strong>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-primary" style="width: 85%"></div>
+                </div>
+            </div>
+            <div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Satisfacción de Usuarios</span>
+                    <strong class="text-warning">95%</strong>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-warning" style="width: 95%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card-custom p-4">
+            <h4 class="mb-4">
+                <i class="fas fa-exclamation-triangle me-2"></i>Alertas y Notificaciones
+            </h4>
+            
+            {% if suscripciones_pendientes > 0 %}
+            <div class="alert alert-warning mb-3">
+                <strong>
+                    <i class="fas fa-clock me-2"></i>
+                    {{ suscripciones_pendientes }} suscripción{{ suscripciones_pendientes|pluralize:"es" }} pendiente{{ suscripciones_pendientes|pluralize }}
+                </strong>
+                <p class="mb-0 small">Requieren validación manual</p>
+            </div>
+            {% endif %}
+
+            <div class="alert alert-success mb-3">
+                <strong>
+                    <i class="fas fa-check-circle me-2"></i>
+                    Sistema operando normalmente
+                </strong>
+                <p class="mb-0 small">Todos los servicios funcionando correctamente</p>
+            </div>
+
+            <div class="alert alert-info mb-0">
+                <strong>
+                    <i class="fas fa-info-circle me-2"></i>
+                    Estadísticas del día
+                </strong>
+                <p class="mb-0 small">{{ usuarios_registrados }} usuarios • {{ suscripciones_activas }} suscripciones activas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Links to Admin Django -->
+<div class="row">
+    <div class="col-12">
+        <div class="card-custom p-4 text-center">
+            <h5 class="mb-3">Administración Avanzada</h5>
+            <p class="text-muted mb-3">
+                Para configuraciones avanzadas del sistema, utiliza el panel de administración de Django
+            </p>
+            <a href="/admin/" class="btn btn-outline-primary" target="_blank">
+                <i class="fas fa-external-link-alt me-2"></i>Ir a Django Admin
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
