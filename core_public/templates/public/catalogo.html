@@ -3,6 +3,10 @@
 
 {% block title %}Catálogo - StreamPoint{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'public/css/public_styles.css' %}">
+{% endblock %}
+
 {% block content %}
 <!-- Header -->
 <div class="row mb-4">
@@ -191,6 +195,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'public/js/public_scripts.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Resaltar filtro activo
@@ -204,6 +209,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.classList.add('btn-primary');
             }
         });
+    }
+
+    // Crear mensaje de "no hay resultados" si no existe
+    const grid = document.querySelector('.row.g-4');
+    if (grid && !document.getElementById('noResultsMessage')) {
+        const noResultsDiv = document.createElement('div');
+        noResultsDiv.id = 'noResultsMessage';
+        noResultsDiv.className = 'col-12';
+        noResultsDiv.style.display = 'none';
+        noResultsDiv.innerHTML = `
+            <div class="card-custom text-center p-5">
+                <i class="fas fa-search" style="font-size: 4rem; color: var(--text-light); margin-bottom: 20px;"></i>
+                <h4>No se encontraron servicios</h4>
+                <p class="text-muted">Intenta con otro término de búsqueda.</p>
+            </div>
+        `;
+        grid.appendChild(noResultsDiv);
     }
 });
 </script>

@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre Nosotros - StreamPoint{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'public/css/public_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card-custom p-5 text-center bg-gradient-primary text-white">
+            <div class="mb-4">
+                <i class="fas fa-play-circle" style="font-size: 5rem;"></i>
+            </div>
+            <h1 class="display-4 fw-bold mb-3">StreamPoint</h1>
+            <p class="lead mb-0">
+                Tu plataforma inteligente de gestión de suscripciones con sistema de cashback
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Misión y Visión -->
+<div class="row mb-5">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card-custom p-4 h-100">
+            <div class="text-center mb-3">
+                <div class="category-icon bg-gradient-primary">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+            </div>
+            <h3 class="text-gradient text-center mb-3">Nuestra Misión</h3>
+            <p class="text-light text-center">
+                Facilitar el acceso a servicios de streaming de calidad, permitiendo a nuestros usuarios 
+                gestionar todas sus suscripciones en un solo lugar mientras reciben recompensas por su fidelidad. 
+                Creemos que todos merecen disfrutar del mejor entretenimiento digital de manera accesible y rentable.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card-custom p-4 h-100">
+            <div class="text-center mb-3">
+                <div class="category-icon bg-gradient-primary">
+                    <i class="fas fa-eye"></i>
+                </div>
+            </div>
+            <h3 class="text-gradient text-center mb-3">Nuestra Visión</h3>
+            <p class="text-light text-center">
+                Ser la plataforma líder en América Latina para la gestión de suscripciones digitales, 
+                reconocida por nuestro innovador sistema de recompensas y por brindar la mejor experiencia 
+                de usuario en el ecosistema del streaming.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ¿Qué es StreamPoint? -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card-custom p-5">
+            <h2 class="text-gradient mb-4 text-center">
+                <i class="fas fa-info-circle me-2"></i>¿Qué es StreamPoint?
+            </h2>
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <p class="text-light lead text-center mb-4">
+                        StreamPoint es una plataforma innovadora que revoluciona la forma en que gestionas 
+                        tus suscripciones a servicios de streaming.
+                    </p>
+                    <p class="text-light text-center">
+                        Combinamos la conveniencia de un portal centralizado con un atractivo sistema de 
+                        cashback que te recompensa por cada compra y renovación. No somos solo un marketplace, 
+                        somos tu aliado para maximizar el valor de tus suscripciones digitales.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Valores -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-white text-center mb-4">Nuestros Valores</h2>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card-custom p-4 text-center h-100">
+            <div class="category-icon">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <h4 class="text-gradient mb-3">Confianza</h4>
+            <p class="text-light">
+                Construimos relaciones duraderas basadas en la transparencia, 
+                la seguridad y el cumplimiento de nuestras promesas.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card-custom p-4 text-center h-100">
+            <div class="category-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <h4 class="text-gradient mb-3">Innovación</h4>
+            <p class="text-light">
+                Buscamos constantemente nuevas formas de mejorar la experiencia 
+                de nuestros usuarios y agregar valor a nuestros servicios.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card-custom p-4 text-center h-100">
+            <div class="category-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h4 class="text-gradient mb-3">Comunidad</h4>
+            <p class="text-light">
+                Creamos una comunidad de usuarios satisfechos que se benefician 
+                mutuamente de nuestro ecosistema de recompensas.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Cómo funciona el sistema -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card-custom p-5">
+            <h2 class="text-gradient mb-4 text-center">
+                <i class="fas fa-cogs me-2"></i>¿Cómo Funciona Nuestro Sistema?
+            </h2>
+            <div class="row g-4 mt-3">
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                            1
+                        </div>
+                        <h5 class="text-white mb-2">Regístrate</h5>
+                        <p class="text-muted">
+                            Crea tu cuenta de forma gratuita y accede a nuestro catálogo completo de servicios.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                            2
+                        </div>
+                        <h5 class="text-white mb-2">Compra</h5>
+                        <p class="text-muted">
+                            Elige el servicio y plan que desees. Realiza el pago de forma segura.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                            3
+                        </div>
+                        <h5 class="text-white mb-2">Acumula</h5>
+                        <p class="text-muted">
+                            Recibe puntos automáticamente por cada compra y renovación de tus suscripciones.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                             style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                            4
+                        </div>
+                        <h5 class="text-white mb-2">Canjea</h5>
+                        <p class="text-muted">
+                            Usa tus puntos acumulados para obtener descuentos o suscripciones totalmente gratis.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sistema de Puntos Explicado -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card-custom p-5 bg-gradient-warning text-white">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-coins me-2"></i>Sistema de Puntos y Cashback
+            </h2>
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="alert" style="background: rgba(255, 255, 255, 0.2); border: none;">
+                        <h5 class="mb-3"><i class="fas fa-star me-2"></i>¿Cómo gano puntos?</h5>
+                        <ul class="text-white">
+                            <li class="mb-2"><strong>Primera compra:</strong> Recibe puntos bonus al comprar cualquier plan por primera vez</li>
+                            <li class="mb-2"><strong>Renovaciones:</strong> Gana puntos cada vez que renuevas tus suscripciones</li>
+                            <li class="mb-2"><strong>Programas especiales:</strong> Participa en promociones para ganar puntos extras</li>
+                        </ul>
+                    </div>
+                    <div class="alert mt-3" style="background: rgba(255, 255, 255, 0.2); border: none;">
+                        <h5 class="mb-3"><i class="fas fa-gift me-2"></i>¿Cómo uso mis puntos?</h5>
+                        <ul class="text-white">
+                            <li class="mb-2"><strong>Conversión:</strong> Cada 10 puntos equivalen a $1 COP de descuento</li>
+                            <li class="mb-2"><strong>Mínimo de canje:</strong> Necesitas al menos 500 puntos para empezar a canjear</li>
+                            <li class="mb-2"><strong>Sin vencimiento:</strong> Tus puntos nunca expiran, acumula sin preocupaciones</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Beneficios -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-white text-center mb-4">¿Por Qué Elegir StreamPoint?</h2>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-custom p-4 h-100">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="category-icon bg-success">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="text-white">Ahorro Real</h5>
+                    <p class="text-muted mb-0">
+                        Nuestro sistema de cashback te permite recuperar parte de tu inversión 
+                        en forma de puntos canjeables.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-custom p-4 h-100">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="category-icon bg-primary">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="text-white">Seguridad Garantizada</h5>
+                    <p class="text-muted mb-0">
+                        Todas las transacciones son verificadas y protegidas. 
+                        Tu información está siempre segura con nosotros.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-custom p-4 h-100">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="category-icon bg-info">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="text-white">Todo en un Lugar</h5>
+                    <p class="text-muted mb-0">
+                        Gestiona todas tus suscripciones desde un único dashboard. 
+                        Olvídate de recordar múltiples fechas y plataformas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-custom p-4 h-100">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="category-icon bg-warning">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="text-white">Soporte Dedicado</h5>
+                    <p class="text-muted mb-0">
+                        Nuestro equipo está disponible 24/7 para resolver cualquier 
+                        duda o problema que tengas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-custom p-4 h-100">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="category-icon bg-danger">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="text-white">Recordatorios Automáticos</h5>
+                    <p class="text-muted mb-0">
+                        Recibe notificaciones antes de que venza tu suscripción 
+                        para que nunca pierdas acceso a tus servicios.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card-custom p-4 h-100">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="category-icon bg-secondary">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="text-white">Análisis de Gastos</h5>
+                    <p class="text-muted mb-0">
+                        Visualiza cuánto gastas mensualmente en entretenimiento 
+                        y optimiza tus suscripciones.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card-custom p-5 text-center">
+            <h2 class="text-gradient mb-4">StreamPoint en Números</h2>
+            <div class="row">
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="stat-value counter-animate" data-target="1000">0</div>
+                    <div class="stat-label">Usuarios Activos</div>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="stat-value counter-animate" data-target="50">0</div>
+                    <div class="stat-label">Servicios Disponibles</div>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="stat-value counter-animate" data-target="5000">0</div>
+                    <div class="stat-label">Suscripciones Gestionadas</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-value counter-animate" data-target="10000000">0</div>
+                    <div class="stat-label">Puntos Canjeados</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Equipo / Contacto -->
+<div class="row mb-5">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card-custom p-4 h-100">
+            <h3 class="text-gradient mb-3">
+                <i class="fas fa-users me-2"></i>Nuestro Equipo
+            </h3>
+            <p class="text-light">
+                Somos un equipo apasionado de profesionales dedicados a mejorar la experiencia 
+                del entretenimiento digital. Combinamos expertise en tecnología, finanzas y 
+                servicio al cliente para ofrecerte la mejor plataforma posible.
+            </p>
+            <p class="text-light mb-0">
+                Nuestro compromiso es con tu satisfacción y tu ahorro. Cada día trabajamos 
+                para agregar más servicios, mejorar nuestro sistema de recompensas y 
+                brindarte la mejor experiencia.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card-custom p-4 h-100">
+            <h3 class="text-gradient mb-3">
+                <i class="fas fa-envelope me-2"></i>Contáctanos
+            </h3>
+            <p class="text-light mb-3">
+                ¿Tienes preguntas, sugerencias o necesitas ayuda? Estamos aquí para ti.
+            </p>
+            <ul class="list-unstyled text-light">
+                <li class="mb-3">
+                    <i class="fas fa-envelope text-primary me-2"></i>
+                    <strong>Email:</strong> info@streampoint.com
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-phone text-primary me-2"></i>
+                    <strong>Teléfono:</strong> +57 300 123 4567
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-clock text-primary me-2"></i>
+                    <strong>Horario:</strong> 24/7 (Soporte siempre disponible)
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                    <strong>Ubicación:</strong> Bogotá, Colombia
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action Final -->
+{% if not user.is_authenticated %}
+<div class="row">
+    <div class="col-12">
+        <div class="card-custom text-center p-5 bg-gradient-primary text-white">
+            <h2 class="mb-3">¿Listo para Empezar a Ahorrar?</h2>
+            <p class="lead mb-4">
+                Únete a miles de usuarios que ya están disfrutando de sus servicios favoritos 
+                mientras ganan puntos.
+            </p>
+            <div>
+                <a href="{% url 'user:registro' %}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-user-plus me-2"></i>Crear Cuenta Gratis
+                </a>
+                <a href="{% url 'public:catalogo' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-th me-2"></i>Ver Catálogo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card-custom text-center p-5 bg-gradient-primary text-white">
+            <h2 class="mb-3">¡Gracias por ser parte de StreamPoint!</h2>
+            <p class="lead mb-4">
+                Explora nuestro catálogo y sigue acumulando puntos
+            </p>
+            <div>
+                <a href="{% url 'public:catalogo' %}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-th me-2"></i>Ver Catálogo
+                </a>
+                <a href="{% url 'user:dashboard' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-tachometer-alt me-2"></i>Mi Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'public/js/public_scripts.js' %}"></script>
+{% endblock %}

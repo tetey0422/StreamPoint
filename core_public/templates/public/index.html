@@ -3,6 +3,10 @@
 
 {% block title %}Inicio - StreamPoint{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'public/css/public_styles.css' %}">
+{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
@@ -196,4 +200,8 @@
     </div>
 </section>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'public/js/public_scripts.js' %}"></script>
 {% endblock %}
