@@ -84,19 +84,22 @@ body {
 }
 
 .btn-outline-custom {
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
+    border: 2px solid white;
+    color: white;
     padding: 10px 25px;
     border-radius: 50px;
     font-weight: 600;
     transition: all 0.3s ease;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .btn-outline-custom:hover {
-    background: var(--gradient-primary);
-    color: white;
-    border-color: transparent;
+    background: white;
+    color: var(--primary-color);
+    border-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3);
 }
 
 /* ============================================
@@ -122,6 +125,19 @@ body {
 .card-custom:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Mejorar visibilidad de texto en cards */
+.card-custom .text-muted {
+    color: #475569 !important;
+}
+
+.card-custom h5 {
+    color: #1e293b !important;
+}
+
+.card-custom p {
+    color: #64748b !important;
 }
 
 .card-header-custom {
@@ -155,6 +171,44 @@ body {
     background: white;
 }
 
+/* Service Cards Featured */
+.service-card-featured {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.service-card-featured:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.service-card-featured .card-body {
+    transition: all 0.3s ease;
+}
+
+.service-card-featured:hover .card-body {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Step Numbers */
+.step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
 /* Plan Cards */
 .plan-card {
     border: 2px solid #e2e8f0;
@@ -170,9 +224,11 @@ body {
 }
 
 .plan-price {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .plan-features {
@@ -481,4 +537,106 @@ footer a:hover {
 
 .rounded-custom {
     border-radius: 20px;
+}
+
+/* ============================================
+   PROJECT PAGE STYLES
+   ============================================ */
+.danger-zone {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.warning-zone {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.technique-card {
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.technique-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.section-card {
+    background: white;
+}
+
+.hero-project {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 100px 0;
+    margin-bottom: 50px;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+/* ============================================
+   LOGOUT BUTTON
+   ============================================ */
+.dropdown-item.logout-btn {
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-item.logout-btn:hover {
+    background-color: #f8d7da;
+}
+
+/* ============================================
+   DROPDOWN FIX
+   ============================================ */
+.dropdown-menu {
+    z-index: 9999 !important;
+}
+
+.navbar {
+    z-index: 1030 !important;
+}
+
+/* ============================================
+   FORM CUSTOM STYLES
+   ============================================ */
+.form-custom {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.form-label-custom {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.form-control-custom {
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 12px 15px !important;
+    transition: all 0.3s ease !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+.form-control-custom:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
+    outline: none !important;
+}
+
+.input-group .form-control-custom {
+    border-radius: 10px 0 0 10px !important;
+}
+
+.input-group .btn {
+    border-radius: 0 10px 10px 0 !important;
 }

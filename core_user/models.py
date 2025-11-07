@@ -107,8 +107,10 @@ class Suscripcion(models.Model):
         # LUEGO otorgar puntos (evita problemas de sincronización)
         if self.validada and self.puntos_otorgados == 0 and self.metodo_pago != 'puntos':
             puntos = self.plan.puntos_primera_compra if self.es_primera_compra else self.plan.puntos_renovacion
-        
-            self.usuario.perfil.agregar_puntos(
+            
+            # Crear o obtener perfil de forma segura
+            perfil, created = PerfilUsuario.objects.get_or_create(user=self.usuario)
+            perfil.agregar_puntos(
                 puntos,
                 f"Cashback por {self.plan.servicio.nombre} - {self.plan.nombre}"
             )
@@ -116,7 +118,6 @@ class Suscripcion(models.Model):
             # Guardar de nuevo solo si se otorgaron puntos
             super().save(update_fields=['puntos_otorgados'])
         
-        super().save(*args, **kwargs)
     
     def esta_activa(self):
         """Verifica si la suscripción está activa"""

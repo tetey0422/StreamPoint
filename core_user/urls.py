@@ -8,7 +8,7 @@ urlpatterns = [
     # Autenticación
     path('registro/', views.registro, name='registro'),
     path('login/', auth_views.LoginView.as_view(template_name='user/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='public:index'), name='logout'),
+    path('logout/', views.cerrar_sesion, name='logout'),
     
     # Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),

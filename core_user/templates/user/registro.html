@@ -4,90 +4,105 @@
 {% block title %}Registro - StreamPoint{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="form-custom">
-            <div class="text-center mb-4">
-                <i class="fas fa-user-plus" style="font-size: 3rem; color: var(--primary-color);"></i>
-                <h2 class="text-gradient mt-3">Crear Cuenta</h2>
-                <p class="text-muted">Únete a StreamPoint y empieza a ganar puntos</p>
-            </div>
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-7 col-lg-6">
+            <div class="form-custom">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus" style="font-size: 3rem; color: var(--primary-color);"></i>
+                    <h2 class="text-dark mt-3 fw-bold">Crear Cuenta</h2>
+                    <p class="text-muted">Únete a StreamPoint y empieza a ganar puntos</p>
+                </div>
 
-            <form method="post" class="needs-validation" novalidate>
+            <form method="post" id="registroForm">
                 {% csrf_token %}
                 
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
+                <!-- Campo de Usuario -->
                 <div class="mb-3">
                     <label for="{{ form.username.id_for_label }}" class="form-label-custom">
                         <i class="fas fa-user me-2"></i>Usuario
                     </label>
                     {{ form.username }}
                     {% if form.username.errors %}
-                        <div class="text-danger small mt-1">
-                            {{ form.username.errors }}
-                        </div>
+                        {% for error in form.username.errors %}
+                            <div class="alert alert-danger mt-2 py-2">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    {{ error }}
+                                </small>
+                            </div>
+                        {% endfor %}
                     {% endif %}
-                    <small class="text-muted d-block mt-1">
-                        Requerido. 150 caracteres o menos. Letras, dígitos y @/./+/-/_ solamente.
-                    </small>
+                    {% if form.username.help_text %}
+                        <small class="text-muted d-block mt-1">
+                            {{ form.username.help_text|safe }}
+                        </small>
+                    {% endif %}
                 </div>
 
+                <!-- Campo de Contraseña -->
                 <div class="mb-3">
                     <label for="{{ form.password1.id_for_label }}" class="form-label-custom">
                         <i class="fas fa-lock me-2"></i>Contraseña
                     </label>
-                    <div class="input-group">
+                    <div class="position-relative">
                         {{ form.password1 }}
-                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#{{ form.password1.id_for_label }}">
-                            <i class="fas fa-eye"></i>
+                        <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y toggle-password" 
+                                type="button" 
+                                data-target="#{{ form.password1.id_for_label }}"
+                                style="z-index: 10; text-decoration: none;">
+                            <i class="fas fa-eye text-muted"></i>
                         </button>
                     </div>
                     {% if form.password1.errors %}
-                        <div class="text-danger small mt-1">
-                            {{ form.password1.errors }}
-                        </div>
+                        {% for error in form.password1.errors %}
+                            <div class="alert alert-danger mt-2 py-2">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    {{ error }}
+                                </small>
+                            </div>
+                        {% endfor %}
                     {% endif %}
-                    <small class="text-muted d-block mt-1">
-                        <ul class="ps-3 mb-0">
-                            <li>Tu contraseña debe contener al menos 8 caracteres</li>
-                            <li>No puede ser completamente numérica</li>
-                            <li>No puede ser una contraseña común</li>
-                        </ul>
-                    </small>
+                    {% if form.password1.help_text %}
+                        <small class="text-muted d-block mt-1">
+                            {{ form.password1.help_text|safe }}
+                        </small>
+                    {% endif %}
                 </div>
 
+                <!-- Campo de Confirmar Contraseña -->
                 <div class="mb-4">
                     <label for="{{ form.password2.id_for_label }}" class="form-label-custom">
                         <i class="fas fa-lock me-2"></i>Confirmar Contraseña
                     </label>
-                    <div class="input-group">
+                    <div class="position-relative">
                         {{ form.password2 }}
-                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#{{ form.password2.id_for_label }}">
-                            <i class="fas fa-eye"></i>
+                        <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y toggle-password" 
+                                type="button" 
+                                data-target="#{{ form.password2.id_for_label }}"
+                                style="z-index: 10; text-decoration: none;">
+                            <i class="fas fa-eye text-muted"></i>
                         </button>
                     </div>
                     {% if form.password2.errors %}
-                        <div class="text-danger small mt-1">
-                            {{ form.password2.errors }}
-                        </div>
+                        {% for error in form.password2.errors %}
+                            <div class="alert alert-danger mt-2 py-2">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    {{ error }}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.password2.help_text %}
+                        <small class="text-muted d-block mt-1">
+                            {{ form.password2.help_text|safe }}
+                        </small>
                     {% endif %}
                 </div>
 
-                <div class="mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="terms" required>
-                        <label class="form-check-label" for="terms">
-                            Acepto los <a href="#" class="text-primary">términos y condiciones</a>
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary-custom w-100 mb-3" data-loading>
+                <button type="submit" class="btn btn-primary-custom w-100 mb-3" id="submitBtn">
                     <i class="fas fa-user-plus me-2"></i>Crear Cuenta
                 </button>
 
@@ -110,16 +125,76 @@
                     <li>Recibe notificaciones de vencimiento</li>
                 </ul>
             </div>
+            </div>
         </div>
     </div>
 </div>
 
+<style>
+    /* Estilos para los campos del formulario */
+    #{{ form.username.id_for_label }},
+    #{{ form.password1.id_for_label }},
+    #{{ form.password2.id_for_label }} {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+    
+    #{{ form.username.id_for_label }}:focus,
+    #{{ form.password1.id_for_label }}:focus,
+    #{{ form.password2.id_for_label }}:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+        outline: none;
+    }
+    
+    #{{ form.password1.id_for_label }},
+    #{{ form.password2.id_for_label }} {
+        padding-right: 45px;
+    }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Agregar clases a los inputs del formulario
-    document.querySelectorAll('input[type="text"], input[type="password"]').forEach(input => {
-        input.classList.add('form-control-custom');
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const targetId = this.getAttribute('data-target');
+            const input = document.querySelector(targetId);
+            const icon = this.querySelector('i');
+            
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        });
     });
+    
+    // Form submission handler
+    const form = document.getElementById('registroForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            // Mostrar estado de carga
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creando cuenta...';
+        });
+    }
 });
 </script>
 {% endblock %}

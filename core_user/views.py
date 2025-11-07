@@ -1,33 +1,67 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
 from .models import Suscripcion, PerfilUsuario
 from core_public.models import PlanSuscripcion
+from core_public.models import ConfiguracionRecompensa
 
 
 def registro(request):
     """Registro de nuevos usuarios"""
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
+        
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, f'¡Bienvenido {user.username}! Tu cuenta ha sido creada exitosamente.')
-            return redirect('user:dashboard')
+            try:
+                # Guardar el usuario
+                user = form.save()
+                
+                # Crear perfil (aunque las signals deberían hacerlo automáticamente)
+                perfil, created = PerfilUsuario.objects.get_or_create(user=user)
+                
+                # Iniciar sesión automáticamente
+                login(request, user)
+                
+                # Mensaje de éxito
+                messages.success(request, f'¡Bienvenido {user.username}! Tu cuenta ha sido creada exitosamente.')
+                
+                # Redirigir al dashboard
+                return redirect('user:dashboard')
+                
+            except Exception as e:
+                messages.error(request, f'Error al crear la cuenta: {str(e)}')
+        else:
+            # Agregar errores específicos como mensajes
+            if form.errors:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, error)
     else:
         form = UserCreationForm()
     
     return render(request, 'user/registro.html', {'form': form})
 
 
+def cerrar_sesion(request):
+    """Cerrar sesión del usuario"""
+    username = request.user.username if request.user.is_authenticated else 'Usuario'
+    logout(request)
+    messages.success(request, f'¡Hasta pronto, {username}! Has cerrado sesión exitosamente.')
+    return redirect('public:index')
+
+
 @login_required
 def dashboard(request):
     """Dashboard del usuario con sus suscripciones y puntos"""
-    perfil = request.user.perfil
+    # Crear perfil si no existe (para usuarios creados antes de las signals)
+    perfil, created = PerfilUsuario.objects.get_or_create(user=request.user)
+    if created:
+        messages.info(request, 'Tu perfil ha sido creado exitosamente.')
+    
     suscripciones_activas = Suscripcion.objects.filter(
         usuario=request.user,
         estado='activa'
@@ -60,7 +94,8 @@ def iniciar_suscripcion(request, plan_id):
         
         # VALIDAR SI PAGA CON PUNTOS
         if metodo_pago == 'puntos':
-            puntos_necesarios = int(plan.precio * 10)  # 10 puntos = $1
+            config = ConfiguracionRecompensa.objects.filter(activo=True).first()
+            puntos_necesarios = int(plan.precio * config.puntos_por_peso)
             if request.user.perfil.puntos_disponibles < puntos_necesarios:
                 messages.error(request, 'No tienes suficientes puntos disponibles.')
                 return redirect('user:iniciar_suscripcion', plan_id=plan_id)

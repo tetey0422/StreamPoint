@@ -4,14 +4,15 @@
 {% block title %}Iniciar Sesión - StreamPoint{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="form-custom">
-            <div class="text-center mb-4">
-                <i class="fas fa-sign-in-alt" style="font-size: 3rem; color: var(--primary-color);"></i>
-                <h2 class="text-gradient mt-3">Iniciar Sesión</h2>
-                <p class="text-muted">Accede a tu cuenta y gestiona tus suscripciones</p>
-            </div>
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-6 col-lg-5">
+            <div class="form-custom">
+                <div class="text-center mb-4">
+                    <i class="fas fa-sign-in-alt" style="font-size: 3rem; color: var(--primary-color);"></i>
+                    <h2 class="text-dark mt-3 fw-bold">Iniciar Sesión</h2>
+                    <p class="text-muted">Accede a tu cuenta y gestiona tus suscripciones</p>
+                </div>
 
             {% if form.errors %}
                 <div class="alert alert-danger">
@@ -29,7 +30,7 @@
                     </label>
                     <input type="text" 
                            name="username" 
-                           class="form-control-custom" 
+                           class="form-control form-control-custom w-100" 
                            id="{{ form.username.id_for_label }}"
                            placeholder="Ingresa tu usuario"
                            required
@@ -40,15 +41,18 @@
                     <label for="{{ form.password.id_for_label }}" class="form-label-custom">
                         <i class="fas fa-lock me-2"></i>Contraseña
                     </label>
-                    <div class="input-group">
+                    <div class="position-relative">
                         <input type="password" 
                                name="password" 
-                               class="form-control-custom" 
+                               class="form-control form-control-custom w-100 pe-5" 
                                id="{{ form.password.id_for_label }}"
                                placeholder="Ingresa tu contraseña"
                                required>
-                        <button class="btn btn-outline-secondary toggle-password" type="button" data-target="#{{ form.password.id_for_label }}">
-                            <i class="fas fa-eye"></i>
+                        <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y toggle-password" 
+                                type="button" 
+                                data-target="#{{ form.password.id_for_label }}"
+                                style="z-index: 10; text-decoration: none;">
+                            <i class="fas fa-eye text-muted"></i>
                         </button>
                     </div>
                 </div>
@@ -90,6 +94,7 @@
                     </button>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 </div>
@@ -98,19 +103,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Toggle password visibility
     document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // Evitar que se envíe el formulario
+            e.stopPropagation(); // Evitar propagación del evento
+            
             const targetId = this.getAttribute('data-target');
             const input = document.querySelector(targetId);
             const icon = this.querySelector('i');
             
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
             }
         });
     });

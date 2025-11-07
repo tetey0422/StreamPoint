@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load user_extras %}
 
 {% block title %}Mi Dashboard - StreamPoint{% endblock %}
 
@@ -28,7 +29,7 @@
             <div class="stat-value">{{ perfil.puntos_disponibles }}</div>
             <div class="stat-label">Puntos Disponibles</div>
             <small class="text-muted d-block mt-2">
-                = ${{ perfil.puntos_disponibles|floatformat:0|divisibleby:10 }} COP
+                {{ perfil.puntos_disponibles|puntos_a_pesos }} COP
             </small>
         </div>
     </div>

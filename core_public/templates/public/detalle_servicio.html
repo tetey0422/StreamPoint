@@ -112,22 +112,22 @@
             <div class="card-body p-4">
                 <!-- Header del Plan -->
                 <div class="text-center mb-4">
-                    <h4 class="card-title text-gradient mb-2">{{ plan.nombre }}</h4>
-                    <div class="display-4 text-white fw-bold mb-1">
+                    <h4 class="card-title mb-3" style="color: var(--primary-color); font-weight: 600;">{{ plan.nombre }}</h4>
+                    <div class="plan-price mb-2">
                         ${{ plan.precio|floatformat:0 }}
                     </div>
-                    <small class="text-muted">COP / {{ plan.get_duracion_display }}</small>
+                    <small class="text-muted fw-semibold">COP / {{ plan.get_duracion_display }}</small>
                 </div>
 
                 <!-- Características del Plan -->
                 <div class="mb-4">
-                    <h6 class="text-white mb-3">
+                    <h6 class="text-dark mb-3">
                         <i class="fas fa-check-circle me-2"></i>Características:
                     </h6>
                     {% if plan.caracteristicas %}
                     <ul class="list-unstyled">
                         {% for caracteristica in plan.caracteristicas %}
-                        <li class="mb-2 text-light">
+                        <li class="mb-2 text-dark">
                             <i class="fas fa-check text-success me-2"></i>{{ caracteristica }}
                         </li>
                         {% endfor %}
@@ -142,7 +142,7 @@
                     <h6 class="text-warning mb-2">
                         <i class="fas fa-coins me-2"></i>Beneficios de Puntos:
                     </h6>
-                    <ul class="list-unstyled mb-0 text-light small">
+                    <ul class="list-unstyled mb-0 text-dark small">
                         <li class="mb-1">
                             <i class="fas fa-star text-warning me-2"></i>
                             Primera compra: <strong>{{ plan.puntos_primera_compra }} puntos</strong>
@@ -199,7 +199,7 @@
             <h4 class="text-gradient mb-3">
                 <i class="fas fa-question-circle me-2"></i>¿Cómo funciona?
             </h4>
-            <ol class="text-light">
+            <ol class="text-dark">
                 <li class="mb-2">Selecciona el plan que más te convenga</li>
                 <li class="mb-2">Realiza el pago de forma segura</li>
                 <li class="mb-2">Recibe tus puntos automáticamente</li>
@@ -213,7 +213,7 @@
             <h4 class="text-gradient mb-3">
                 <i class="fas fa-shield-alt me-2"></i>Garantía y Seguridad
             </h4>
-            <ul class="list-unstyled text-light">
+            <ul class="list-unstyled text-dark">
                 <li class="mb-3">
                     <i class="fas fa-check-circle text-success me-2"></i>
                     <strong>100% Seguro:</strong> Todas las transacciones están protegidas

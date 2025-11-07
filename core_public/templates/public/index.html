@@ -22,15 +22,15 @@
                     Por cada compra y renovación, gana puntos que puedes canjear por nuevas suscripciones.
                 </p>
                 <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
-                    <a href="{% url 'public:catalogo' %}" class="btn btn-primary-custom btn-lg">
-                        <i class="fas fa-th me-2"></i>Ver Catálogo
-                    </a>
-                    {% if not user.is_authenticated %}
-                    <a href="{% url 'user:registro' %}" class="btn btn-outline-custom btn-lg">
+                    <a href="{% url 'user:registro' %}" class="btn btn-light btn-lg" style="font-weight: 600;">
                         <i class="fas fa-user-plus me-2"></i>Registrarse Gratis
                     </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'public:catalogo' %}" class="btn btn-light btn-lg" style="font-weight: 600;">
+                        <i class="fas fa-th me-2"></i>Ver Catálogo
+                    </a>
                     {% else %}
-                    <a href="{% url 'user:dashboard' %}" class="btn btn-outline-custom btn-lg">
+                    <a href="{% url 'user:dashboard' %}" class="btn btn-light btn-lg" style="font-weight: 600;">
                         <i class="fas fa-tachometer-alt me-2"></i>Mi Dashboard
                     </a>
                     {% endif %}
@@ -93,18 +93,18 @@
 <section class="container my-5">
     <div class="text-center mb-5">
         <h2 class="text-white display-5 fw-bold mb-3">Explora por Categorías</h2>
-        <p class="text-light lead">Encuentra el contenido perfecto para ti</p>
+        <p class="text-white lead opacity-75">Encuentra el contenido perfecto para ti</p>
     </div>
     
-    <div class="row g-4">
+    <div class="row g-4 justify-content-center">
         {% for categoria in categorias %}
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <a href="{% url 'public:catalogo' %}?categoria={{ categoria.id }}" class="text-decoration-none">
                 <div class="card-custom text-center p-4 service-card h-100">
-                    <div class="category-icon bg-gradient-primary mb-3">
+                    <div class="category-icon bg-gradient-primary mb-3 mx-auto">
                         <i class="fas {{ categoria.icono }}"></i>
                     </div>
-                    <h4 class="text-white mb-3">{{ categoria.nombre }}</h4>
+                    <h4 class="text-dark mb-3">{{ categoria.nombre }}</h4>
                     <p class="text-muted">{{ categoria.descripcion }}</p>
                     <span class="badge bg-primary fs-6">
                         {{ categoria.servicios.count }} servicio{{ categoria.servicios.count|pluralize }}
@@ -126,29 +126,29 @@
         <p class="text-light lead">Los servicios más populares del momento</p>
     </div>
     
-    <div class="row g-4">
+    <div class="row g-4 justify-content-center">
         {% for servicio in servicios_destacados %}
-        <div class="col-md-4 col-lg-2">
+        <div class="col-6 col-md-4 col-lg-2">
             <a href="{% url 'public:detalle_servicio' servicio.id %}" class="text-decoration-none">
-                <div class="card service-card-featured h-100">
+                <div class="card service-card-featured h-100 border-0">
                     <div class="card-body p-0">
                         {% if servicio.logo_url %}
-                        <div class="p-4 bg-light">
+                        <div class="p-4 bg-white rounded-top" style="min-height: 140px; display: flex; align-items: center; justify-content: center;">
                             <img src="{{ servicio.logo_url }}" 
                                  class="service-logo" 
                                  alt="{{ servicio.nombre }}"
-                                 style="width: 100%; height: 100px; object-fit: contain;">
+                                 style="width: 100%; max-height: 80px; object-fit: contain;">
                         </div>
                         {% else %}
-                        <div class="p-4 text-center bg-light">
+                        <div class="p-4 text-center bg-white rounded-top" style="min-height: 140px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-play-circle" style="font-size: 4rem; color: var(--primary-color);"></i>
                         </div>
                         {% endif %}
                         
-                        <div class="p-3 text-center">
-                            <h6 class="card-title mb-1">{{ servicio.nombre }}</h6>
-                            <small class="text-muted d-block mb-2">{{ servicio.categoria.nombre }}</small>
-                            <span class="badge bg-warning text-dark">
+                        <div class="p-3 text-center bg-white rounded-bottom">
+                            <h6 class="card-title mb-2 fw-bold text-dark">{{ servicio.nombre }}</h6>
+                            <small class="text-muted d-block mb-2" style="font-size: 0.75rem;">{{ servicio.categoria.nombre }}</small>
+                            <span class="badge bg-warning text-dark fw-bold px-3 py-2">
                                 <i class="fas fa-star me-1"></i>Popular
                             </span>
                         </div>
@@ -160,7 +160,7 @@
     </div>
     
     <div class="text-center mt-5">
-        <a href="{% url 'public:catalogo' %}" class="btn btn-outline-custom btn-lg">
+        <a href="{% url 'public:catalogo' %}" class="btn btn-light btn-lg" style="font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
             Ver todos los servicios
             <i class="fas fa-arrow-right ms-2"></i>
         </a>
