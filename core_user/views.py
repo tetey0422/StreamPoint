@@ -58,6 +58,19 @@ def iniciar_suscripcion(request, plan_id):
         metodo_pago = request.POST.get('metodo_pago')
         email_servicio = request.POST.get('email_servicio')
         
+        # VALIDAR SI PAGA CON PUNTOS
+        if metodo_pago == 'puntos':
+            puntos_necesarios = int(plan.precio * 10)  # 10 puntos = $1
+            if request.user.perfil.puntos_disponibles < puntos_necesarios:
+                messages.error(request, 'No tienes suficientes puntos disponibles.')
+                return redirect('user:iniciar_suscripcion', plan_id=plan_id)
+            
+            # Descontar puntos
+            request.user.perfil.canjear_puntos(
+                puntos_necesarios,
+                f"Canje por {plan.servicio.nombre} - {plan.nombre}"
+            )
+        
         # Verificar si es primera compra de este servicio
         es_primera = not Suscripcion.objects.filter(
             usuario=request.user,

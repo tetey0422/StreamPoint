@@ -3,7 +3,7 @@
 # ============================================
 from django.contrib import admin
 from .models import PerfilUsuario, Suscripcion, TransaccionPuntos
-
+from django.utils import timezone
 
 @admin.register(PerfilUsuario)
 class PerfilUsuarioAdmin(admin.ModelAdmin):

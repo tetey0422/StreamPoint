@@ -100,18 +100,21 @@ class Suscripcion(models.Model):
         # Si es nueva suscripción, calcular fecha de vencimiento
         if not self.pk:
             self.fecha_vencimiento = self.fecha_inicio + timedelta(days=self.plan.get_duracion_dias())
-        
-        # Si se valida la suscripción y aún no se han otorgado puntos
+    
+        # Guardar primero para tener el ID
+        super().save(*args, **kwargs)
+    
+        # LUEGO otorgar puntos (evita problemas de sincronización)
         if self.validada and self.puntos_otorgados == 0 and self.metodo_pago != 'puntos':
-            # Determinar puntos según si es primera compra
             puntos = self.plan.puntos_primera_compra if self.es_primera_compra else self.plan.puntos_renovacion
-            
-            # Otorgar puntos al usuario
+        
             self.usuario.perfil.agregar_puntos(
                 puntos,
                 f"Cashback por {self.plan.servicio.nombre} - {self.plan.nombre}"
             )
             self.puntos_otorgados = puntos
+            # Guardar de nuevo solo si se otorgaron puntos
+            super().save(update_fields=['puntos_otorgados'])
         
         super().save(*args, **kwargs)
     

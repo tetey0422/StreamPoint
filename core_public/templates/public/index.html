@@ -8,65 +8,78 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
+<!-- Hero Section Mejorado -->
 <section class="hero-section">
-    <div class="row align-items-center">
-        <div class="col-lg-6 text-lg-start text-center mb-4 mb-lg-0">
-            <h1 class="hero-title">Gestiona tus suscripciones y gana puntos</h1>
-            <p class="hero-subtitle">
-                Compra tus servicios de streaming favoritos y recibe cashback en puntos. 
-                ¡Canjéalos por suscripciones gratis!
-            </p>
-            <div class="mt-4">
-                <a href="{% url 'public:catalogo' %}" class="btn btn-primary-custom btn-lg me-3">
-                    <i class="fas fa-th me-2"></i>Ver Catálogo
-                </a>
-                {% if not user.is_authenticated %}
-                <a href="{% url 'user:registro' %}" class="btn btn-outline-custom btn-lg">
-                    <i class="fas fa-user-plus me-2"></i>Registrarse
-                </a>
-                {% endif %}
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-lg-start text-center">
+                <h1 class="hero-title mb-4">
+                    Gestiona tus suscripciones y 
+                    <span class="text-warning d-block">¡Gana Recompensas!</span>
+                </h1>
+                <p class="hero-subtitle mb-4">
+                    Compra tus servicios de streaming favoritos de manera 100% legal y segura. 
+                    Por cada compra y renovación, gana puntos que puedes canjear por nuevas suscripciones.
+                </p>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
+                    <a href="{% url 'public:catalogo' %}" class="btn btn-primary-custom btn-lg">
+                        <i class="fas fa-th me-2"></i>Ver Catálogo
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'user:registro' %}" class="btn btn-outline-custom btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Registrarse Gratis
+                    </a>
+                    {% else %}
+                    <a href="{% url 'user:dashboard' %}" class="btn btn-outline-custom btn-lg">
+                        <i class="fas fa-tachometer-alt me-2"></i>Mi Dashboard
+                    </a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        <div class="col-lg-6 text-center">
-            <i class="fas fa-tv" style="font-size: 15rem; color: rgba(255,255,255,0.2);"></i>
+            <div class="col-lg-6 text-center mt-5 mt-lg-0">
+                <div class="hero-image-float">
+                    <i class="fas fa-tv" style="font-size: 15rem; color: rgba(255,255,255,0.2);"></i>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Características Principales -->
-<section class="mt-5">
+<!-- Características Principales con Cards Flotantes -->
+<section class="container my-5">
     <div class="row g-4">
         <div class="col-md-4">
-            <div class="card-custom text-center p-4">
-                <div class="category-icon">
+            <div class="card-custom text-center p-4 float-card h-100">
+                <div class="category-icon bg-gradient-primary mb-3">
                     <i class="fas fa-coins"></i>
                 </div>
-                <h4>Sistema de Puntos</h4>
+                <h4 class="text-gradient mb-3">Sistema de Puntos</h4>
                 <p class="text-muted">
                     Gana puntos con cada compra y renovación. 
                     Acumula y canjea por suscripciones gratis.
                 </p>
             </div>
         </div>
+        
         <div class="col-md-4">
-            <div class="card-custom text-center p-4">
-                <div class="category-icon">
+            <div class="card-custom text-center p-4 float-card h-100">
+                <div class="category-icon bg-success mb-3">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h4>Compra Segura</h4>
+                <h4 class="text-gradient mb-3">Compra Segura</h4>
                 <p class="text-muted">
                     Todas tus transacciones son verificadas por nuestro equipo 
                     antes de activar tus suscripciones.
                 </p>
             </div>
         </div>
+        
         <div class="col-md-4">
-            <div class="card-custom text-center p-4">
-                <div class="category-icon">
+            <div class="card-custom text-center p-4 float-card h-100">
+                <div class="category-icon bg-info mb-3">
                     <i class="fas fa-headset"></i>
                 </div>
-                <h4>Soporte 24/7</h4>
+                <h4 class="text-gradient mb-3">Soporte 24/7</h4>
                 <p class="text-muted">
                     Nuestro equipo está disponible para ayudarte 
                     en cualquier momento que lo necesites.
@@ -77,19 +90,23 @@
 </section>
 
 <!-- Categorías -->
-<section class="mt-5">
-    <h2 class="text-white text-center mb-4">Explora por Categorías</h2>
+<section class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="text-white display-5 fw-bold mb-3">Explora por Categorías</h2>
+        <p class="text-light lead">Encuentra el contenido perfecto para ti</p>
+    </div>
+    
     <div class="row g-4">
         {% for categoria in categorias %}
         <div class="col-md-4">
             <a href="{% url 'public:catalogo' %}?categoria={{ categoria.id }}" class="text-decoration-none">
-                <div class="card-custom text-center p-4 service-card">
-                    <div class="category-icon">
+                <div class="card-custom text-center p-4 service-card h-100">
+                    <div class="category-icon bg-gradient-primary mb-3">
                         <i class="fas {{ categoria.icono }}"></i>
                     </div>
-                    <h4>{{ categoria.nombre }}</h4>
+                    <h4 class="text-white mb-3">{{ categoria.nombre }}</h4>
                     <p class="text-muted">{{ categoria.descripcion }}</p>
-                    <span class="badge bg-primary">
+                    <span class="badge bg-primary fs-6">
                         {{ categoria.servicios.count }} servicio{{ categoria.servicios.count|pluralize }}
                     </span>
                 </div>
@@ -99,104 +116,192 @@
     </div>
 </section>
 
-<!-- Servicios Destacados -->
-<section class="mt-5">
-    <h2 class="text-white text-center mb-4">Servicios Destacados</h2>
+<!-- Servicios Destacados MEJORADO -->
+<section class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="text-white display-5 fw-bold mb-3">
+            <i class="fas fa-fire text-warning me-2"></i>
+            Servicios Destacados
+        </h2>
+        <p class="text-light lead">Los servicios más populares del momento</p>
+    </div>
+    
     <div class="row g-4">
         {% for servicio in servicios_destacados %}
         <div class="col-md-4 col-lg-2">
             <a href="{% url 'public:detalle_servicio' servicio.id %}" class="text-decoration-none">
-                <div class="card service-card">
-                    {% if servicio.logo_url %}
-                    <img src="{{ servicio.logo_url }}" class="service-logo" alt="{{ servicio.nombre }}">
-                    {% else %}
-                    <div class="service-logo d-flex align-items-center justify-content-center">
-                        <i class="fas fa-play-circle" style="font-size: 4rem; color: var(--primary-color);"></i>
-                    </div>
-                    {% endif %}
-                    <div class="card-body text-center">
-                        <h6 class="card-title mb-0">{{ servicio.nombre }}</h6>
-                        <small class="text-muted">{{ servicio.categoria.nombre }}</small>
+                <div class="card service-card-featured h-100">
+                    <div class="card-body p-0">
+                        {% if servicio.logo_url %}
+                        <div class="p-4 bg-light">
+                            <img src="{{ servicio.logo_url }}" 
+                                 class="service-logo" 
+                                 alt="{{ servicio.nombre }}"
+                                 style="width: 100%; height: 100px; object-fit: contain;">
+                        </div>
+                        {% else %}
+                        <div class="p-4 text-center bg-light">
+                            <i class="fas fa-play-circle" style="font-size: 4rem; color: var(--primary-color);"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="p-3 text-center">
+                            <h6 class="card-title mb-1">{{ servicio.nombre }}</h6>
+                            <small class="text-muted d-block mb-2">{{ servicio.categoria.nombre }}</small>
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star me-1"></i>Popular
+                            </span>
+                        </div>
                     </div>
                 </div>
             </a>
         </div>
         {% endfor %}
     </div>
-    <div class="text-center mt-4">
-        <a href="{% url 'public:catalogo' %}" class="btn btn-outline-custom">
+    
+    <div class="text-center mt-5">
+        <a href="{% url 'public:catalogo' %}" class="btn btn-outline-custom btn-lg">
             Ver todos los servicios
             <i class="fas fa-arrow-right ms-2"></i>
         </a>
     </div>
 </section>
 
-<!-- Cómo Funciona -->
-<section class="mt-5 mb-5">
-    <h2 class="text-white text-center mb-4">¿Cómo Funciona?</h2>
+<!-- Cómo Funciona VISUAL -->
+<section class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="text-white display-5 fw-bold mb-3">
+            <i class="fas fa-lightbulb text-warning me-2"></i>
+            ¿Cómo Funciona?
+        </h2>
+        <p class="text-light lead">Es muy simple ganar puntos con StreamPoint</p>
+    </div>
+    
     <div class="row g-4">
         <div class="col-md-3">
-            <div class="card-custom text-center p-4">
-                <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center" 
-                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">
-                    1
-                </div>
-                <h5 class="mt-3">Regístrate</h5>
-                <p class="text-muted mb-0">
-                    Crea tu cuenta gratis en menos de 2 minutos
+            <div class="card-custom text-center p-4 h-100">
+                <div class="step-number">1</div>
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-user-plus me-2"></i>Regístrate
+                </h5>
+                <p class="text-muted">
+                    Crea tu cuenta gratis en menos de 2 minutos. Sin compromisos.
                 </p>
             </div>
         </div>
+        
         <div class="col-md-3">
-            <div class="card-custom text-center p-4">
-                <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center" 
-                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">
-                    2
-                </div>
-                <h5 class="mt-3">Elige tu plan</h5>
-                <p class="text-muted mb-0">
-                    Selecciona el servicio y plan que más te convenga
+            <div class="card-custom text-center p-4 h-100">
+                <div class="step-number" style="background: var(--gradient-warning);">2</div>
+                <h5 class="text-warning mb-3">
+                    <i class="fas fa-shopping-cart me-2"></i>Elige tu plan
+                </h5>
+                <p class="text-muted">
+                    Selecciona el servicio y plan que más te convenga.
                 </p>
             </div>
         </div>
+        
         <div class="col-md-3">
-            <div class="card-custom text-center p-4">
-                <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center" 
-                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">
-                    3
-                </div>
-                <h5 class="mt-3">Gana puntos</h5>
-                <p class="text-muted mb-0">
-                    Recibe cashback en puntos por cada compra
+            <div class="card-custom text-center p-4 h-100">
+                <div class="step-number" style="background: linear-gradient(135deg, #10b981, #059669);">3</div>
+                <h5 class="text-success mb-3">
+                    <i class="fas fa-coins me-2"></i>Gana puntos
+                </h5>
+                <p class="text-muted">
+                    Recibe cashback en puntos por cada compra y renovación.
                 </p>
             </div>
         </div>
+        
         <div class="col-md-3">
-            <div class="card-custom text-center p-4">
-                <div class="rounded-circle bg-gradient-primary text-white d-inline-flex align-items-center justify-content-center" 
-                     style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold;">
-                    4
-                </div>
-                <h5 class="mt-3">Canjea</h5>
-                <p class="text-muted mb-0">
-                    Usa tus puntos para obtener suscripciones gratis
+            <div class="card-custom text-center p-4 h-100">
+                <div class="step-number" style="background: linear-gradient(135deg, #ef4444, #dc2626);">4</div>
+                <h5 class="text-danger mb-3">
+                    <i class="fas fa-gift me-2"></i>Canjea
+                </h5>
+                <p class="text-muted">
+                    Usa tus puntos para obtener suscripciones gratis.
                 </p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Call to Action -->
+<!-- Beneficios Destacados -->
+<section class="py-5" style="background: rgba(255, 255, 255, 0.05);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="text-white display-5 fw-bold mb-3">
+                <i class="fas fa-trophy text-warning me-2"></i>
+                Beneficios de StreamPoint
+            </h2>
+            <p class="text-light lead">Por qué elegir streaming legal con nosotros</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                    <h5 class="text-white mb-2">Sistema de Puntos</h5>
+                    <p class="text-light small">
+                        Gana puntos con cada compra y renovación. ¡Acumula y canjea!
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                    <h5 class="text-white mb-2">100% Seguro</h5>
+                    <p class="text-light small">
+                        Tus datos y pagos están protegidos. Sin riesgos de fraude.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
+                    <h5 class="text-white mb-2">Totalmente Legal</h5>
+                    <p class="text-light small">
+                        Apoya a creadores y disfruta sin preocupaciones legales.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                    <h5 class="text-white mb-2">Soporte 24/7</h5>
+                    <p class="text-light small">
+                        Estamos aquí para ayudarte cuando lo necesites.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action FINAL -->
 {% if not user.is_authenticated %}
-<section class="mt-5 mb-5">
-    <div class="card-custom text-center p-5 bg-gradient-primary text-white">
-        <h2 class="mb-3">¿Listo para comenzar?</h2>
-        <p class="lead mb-4">
-            Únete a StreamPoint y empieza a ganar puntos con tus suscripciones favoritas
-        </p>
-        <a href="{% url 'user:registro' %}" class="btn btn-light btn-lg">
-            <i class="fas fa-user-plus me-2"></i>Crear cuenta gratis
-        </a>
+<section class="container my-5">
+    <div class="card-custom p-5 text-center" style="background: var(--gradient-primary); border: none;">
+        <div class="text-white">
+            <i class="fas fa-rocket fa-4x mb-4"></i>
+            <h2 class="display-4 fw-bold mb-3">¿Listo para Comenzar?</h2>
+            <p class="lead mb-4">
+                Únete a miles de usuarios que ya disfrutan del streaming legal con recompensas
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{% url 'user:registro' %}" class="btn btn-light btn-lg px-5">
+                    <i class="fas fa-user-plus me-2"></i>Crear Cuenta Gratis
+                </a>
+                <a href="{% url 'public:informacion_proyecto' %}" class="btn btn-outline-light btn-lg px-5">
+                    <i class="fas fa-info-circle me-2"></i>Más Información
+                </a>
+            </div>
+        </div>
     </div>
 </section>
 {% endif %}
