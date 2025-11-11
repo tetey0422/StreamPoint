@@ -126,30 +126,100 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-4. **Aplicar migraciones**
+4. **Configurar variables de entorno (opcional para desarrollo)**
+```bash
+# Copiar el archivo de ejemplo
+cp .env.example .env
+
+# Editar .env con tus configuraciones (opcional en desarrollo)
+# Para desarrollo local, las configuraciones por defecto funcionan bien
+```
+
+5. **Aplicar migraciones**
 ```bash
 python manage.py migrate
 ```
 
-5. **Crear superusuario (administrador)**
+6. **Crear superusuario (administrador)**
 ```bash
 python manage.py createsuperuser
 ```
 
-6. **Poblar base de datos con datos de prueba**
+7. **Poblar base de datos con datos de prueba**
 ```bash
 python manage.py poblar_datos
 ```
 
-7. **Iniciar servidor de desarrollo**
+8. **Iniciar servidor de desarrollo**
 ```bash
 python manage.py runserver
 ```
 
-8. **Acceder a la aplicación**
+9. **Acceder a la aplicación**
 - **Aplicación:** http://127.0.0.1:8000/
 - **Admin Django:** http://127.0.0.1:8000/admin/
 - **Panel Admin Personalizado:** http://127.0.0.1:8000/admin-custom/dashboard/
+
+### ⚙️ Configuración Avanzada
+
+#### Variables de Entorno
+
+El proyecto usa variables de entorno para configuraciones sensibles. Para desarrollo local no es necesario configurarlas, pero para producción sí.
+
+**Archivo `.env.example`** incluido como plantilla:
+```bash
+# Copiar archivo de ejemplo
+cp .env.example .env
+
+# Editar con tus configuraciones
+nano .env  # o tu editor preferido
+```
+
+**Variables importantes:**
+- `DEBUG` - Modo debug (True/False)
+- `SECRET_KEY` - Clave secreta de Django (generar nueva para producción)
+- `ALLOWED_HOSTS` - Hosts permitidos (separados por comas)
+- `DB_*` - Configuración de base de datos PostgreSQL
+- `EMAIL_*` - Configuración SMTP para emails
+
+**Generar SECRET_KEY segura:**
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+
+#### Base de Datos para Producción
+
+Para producción se recomienda PostgreSQL:
+
+1. **Instalar dependencia:**
+```bash
+pip install psycopg2-binary
+```
+
+2. **Configurar en `.env`:**
+```env
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=streampoint_db
+DB_USER=tu_usuario
+DB_PASSWORD=tu_password
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+3. **Actualizar `settings.py` para leer variables:**
+```python
+import os
+DATABASES = {
+    'default': {
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', ''),
+        'PORT': os.environ.get('DB_PORT', ''),
+    }
+}
+```
 
 ---
 
