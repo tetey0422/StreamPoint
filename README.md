@@ -102,7 +102,35 @@ StreamPoint es una plataforma web desarrollada en Django que permite a los usuar
 - pip (gestor de paquetes de Python)
 - Git (opcional)
 
-### Pasos de Instalación
+### 🚀 Instalación Rápida (Recomendado)
+
+**Opción 1: Script automático (Windows)**
+```bash
+# Después de clonar el repositorio
+.\install.bat
+```
+
+**Opción 2: Script automático (Linux/Mac)**
+```bash
+# Dar permisos de ejecución
+chmod +x install.sh
+
+# Ejecutar
+./install.sh
+```
+
+Estos scripts automatizan todo el proceso de instalación:
+- ✅ Verifican Python
+- ✅ Crean el entorno virtual
+- ✅ Instalan dependencias
+- ✅ Configuran variables de entorno
+- ✅ Aplican migraciones
+- ✅ Ofrecen poblar datos de prueba
+- ✅ Ofrecen crear superusuario
+
+### 📝 Instalación Manual (Paso a Paso)
+
+Si prefieres instalar manualmente o el script automático no funciona:
 
 1. **Clonar o descargar el repositorio**
 ```bash
