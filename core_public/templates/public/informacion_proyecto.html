@@ -243,18 +243,18 @@
 
 <!-- StreamPoint como Solución -->
 <div class="container my-5">
-    <div class="card-custom p-5 bg-gradient-primary text-white">
+    <div class="card-custom p-5" style="border-radius: 50px;">
         <div class="text-center mb-5">
-            <i class="fas fa-shield-alt fa-4x mb-3"></i>
-            <h2 class="display-5 fw-bold">StreamPoint: Una Solución Innovadora</h2>
-            <p class="lead">
+            <i class="fas fa-shield-alt fa-4x mb-3" style="color: var(--primary-color);"></i>
+            <h2 class="display-5 fw-bold text-white">StreamPoint: Una Solución Innovadora</h2>
+            <p class="lead text-light">
                 Incentivos para elegir lo legal sobre lo pirata
             </p>
         </div>
         
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="card bg-white text-dark h-100">
+                <div class="card bg-white text-dark h-100" style="border-radius: 20px;">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-star fa-3x text-warning mb-3"></i>
                         <h5>Sistema de Puntos</h5>
@@ -267,7 +267,7 @@
             </div>
             
             <div class="col-md-4">
-                <div class="card bg-white text-dark h-100">
+                <div class="card bg-white text-dark h-100" style="border-radius: 20px;">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-lock fa-3x text-success mb-3"></i>
                         <h5>100% Seguro</h5>
@@ -280,7 +280,7 @@
             </div>
             
             <div class="col-md-4">
-                <div class="card bg-white text-dark h-100">
+                <div class="card bg-white text-dark h-100" style="border-radius: 20px;">
                     <div class="card-body text-center p-4">
                         <i class="fas fa-graduation-cap fa-3x text-info mb-3"></i>
                         <h5>Educación</h5>
@@ -411,20 +411,20 @@
 
 <!-- CTA Final -->
 <div class="container my-5">
-    <div class="card-custom p-5 text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="card-custom p-5 text-center" style="border-radius: 50px;">
         <div class="text-white">
-            <i class="fas fa-hands-helping fa-4x mb-4"></i>
+            <i class="fas fa-hands-helping fa-4x mb-4" style="color: var(--primary-color);"></i>
             <h2 class="display-4 fw-bold mb-3">Únete al Cambio</h2>
-            <p class="lead mb-4">
+            <p class="lead mb-4 text-light" style="font-size: 1.1rem;">
                 Sé parte de la solución. Elige streaming legal y gana recompensas con StreamPoint.
             </p>
             <div class="d-flex gap-3 justify-content-center">
                 {% if not user.is_authenticated %}
-                <a href="{% url 'user:registro' %}" class="btn btn-light btn-lg">
+                <a href="{% url 'user:registro' %}" class="btn btn-primary-custom btn-lg">
                     <i class="fas fa-user-plus me-2"></i>Registrarse Ahora
                 </a>
                 {% endif %}
-                <a href="{% url 'public:catalogo' %}" class="btn btn-outline-light btn-lg">
+                <a href="{% url 'public:catalogo' %}" class="btn btn-outline-primary btn-lg">
                     <i class="fas fa-search me-2"></i>Ver Catálogo
                 </a>
             </div>

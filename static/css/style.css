@@ -1,20 +1,25 @@
 /* ============================================
-   StreamPoint - Archivo de Estilos Principal
+   StreamPoint - Estilos Principales
+   TEMA NEGRO TIPO NETFLIX
    ============================================ */
 
-/* Variables CSS */
+/* Variables CSS - Tema Morado/Azul */
 :root {
     --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
     --secondary-color: #8b5cf6;
-    --dark-bg: #1e293b;
-    --light-bg: #f8fafc;
-    --text-dark: #0f172a;
-    --text-light: #64748b;
-    --success: #10b981;
-    --warning: #f59e0b;
+    --netflix-black: #141414;
+    --netflix-dark-gray: #1f1f1f;
+    --netflix-gray: #2f2f2f;
+    --netflix-light-gray: #808080;
+    --netflix-white: #e8e8e8;
+    --netflix-text: #d1d1d1;
+    --success: #46d369;
+    --warning: #fbbf24;
     --danger: #ef4444;
+    --gold: #fbbf24;
+    --purple: #8b5cf6;
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
 /* Reset y Estilos Base */
@@ -24,120 +29,323 @@
     box-sizing: border-box;
 }
 
+html {
+    background-color: var(--netflix-black);
+}
+
 body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--gradient-primary);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--netflix-black) !important;
+    color: var(--netflix-text);
     min-height: 100vh;
 }
 
+/* Suavizar colores blancos en toda la página */
+.text-white,
+h1.text-white,
+h2.text-white,
+h3.text-white,
+h4.text-white,
+h5.text-white,
+h6.text-white {
+    color: rgba(232, 232, 232, 0.95) !important;
+}
+
+.text-light {
+    color: rgba(209, 209, 209, 0.85) !important;
+}
+
+/* Forzar fondo negro en contenedores principales */
+.container,
+.container-fluid,
+main,
+#content {
+    background-color: transparent !important;
+}
+
 /* ============================================
-   NAVBAR
+   NAVBAR - Estilo Morado/Azul
    ============================================ */
 .navbar {
-    background: rgba(30, 41, 59, 0.95) !important;
+    background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%) !important;
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+    padding: 15px 0;
+}
+
+.navbar.scrolled {
+    background: rgba(20, 20, 20, 0.98) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
 .navbar-brand {
-    font-weight: 700;
-    font-size: 1.5rem;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: var(--primary-color) !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
 }
 
 .nav-link {
-    color: #e2e8f0 !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 500;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
     position: relative;
+    margin: 0 8px;
+    padding: 8px 12px !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .nav-link:hover {
-    color: #a78bfa !important;
-    transform: translateY(-2px);
+    color: var(--netflix-white) !important;
+    text-shadow: 0 2px 4px rgba(102, 126, 234, 0.5);
 }
 
 .nav-link.active {
-    color: #a78bfa !important;
+    color: var(--netflix-white) !important;
+    font-weight: 700;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+    height: 3px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+/* Badge de puntos */
+.badge.bg-warning {
+    background: linear-gradient(135deg, var(--gold) 0%, #f59e0b 100%) !important;
+    color: var(--netflix-black) !important;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background: var(--netflix-dark-gray);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.dropdown-item {
+    color: var(--netflix-text);
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: rgba(102, 126, 234, 0.2);
+    color: var(--netflix-white);
+}
+
+.dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: var(--danger) !important;
 }
 
 /* ============================================
-   BOTONES
+   BOTONES - Estilo Morado/Azul
    ============================================ */
 .btn-primary-custom {
     background: var(--gradient-primary);
     border: none;
-    padding: 10px 25px;
-    border-radius: 50px;
-    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 1rem;
     transition: all 0.3s ease;
     color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .btn-primary-custom:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
     color: white;
 }
 
 .btn-outline-custom {
-    border: 2px solid white;
-    color: white;
-    padding: 10px 25px;
-    border-radius: 50px;
-    font-weight: 600;
+    border: 2px solid var(--netflix-white);
+    color: var(--netflix-white);
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-weight: 700;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: transparent;
 }
 
 .btn-outline-custom:hover {
-    background: white;
+    background: var(--netflix-white);
+    color: var(--netflix-black);
+    border-color: var(--netflix-white);
+    transform: scale(1.05);
+}
+
+/* Botones outline con colores específicos */
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
     color: var(--primary-color);
-    border-color: white;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-outline-danger {
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+    border: 2px solid var(--netflix-light-gray);
+    color: var(--netflix-light-gray);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--netflix-light-gray);
+    border-color: var(--netflix-light-gray);
+    color: var(--netflix-black);
+    transform: translateY(-2px);
 }
 
 /* ============================================
-   CONTENT WRAPPER
+   HERO SECTION - Estilo Morado/Azul
    ============================================ */
-.content-wrapper {
-    padding: 30px 0;
-    min-height: calc(100vh - 120px);
+.hero-section {
+    background: linear-gradient(135deg, rgba(25, 25, 35, 0.95) 0%, rgba(15, 15, 25, 0.98) 100%);
+    padding: 100px 0 120px 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 50px 50px;
+    margin-bottom: 50px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section h1,
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section p,
+.hero-subtitle {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 30px;
+    line-height: 1.6;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 /* ============================================
-   CARDS
+   CARDS - Estilo Netflix
    ============================================ */
 .card-custom {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: none;
+    background: var(--netflix-dark-gray);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(102, 126, 234, 0.2);
     overflow: hidden;
     transition: all 0.3s ease;
 }
 
 .card-custom:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    border-color: var(--primary-color);
 }
 
-/* Mejorar visibilidad de texto en cards */
-.card-custom .text-muted {
-    color: #475569 !important;
+.card-custom .card-body {
+    padding: 25px;
 }
 
 .card-custom h5 {
-    color: #1e293b !important;
+    color: var(--netflix-white) !important;
+    font-weight: 700;
+    margin-bottom: 15px;
 }
 
-.card-custom p {
-    color: #64748b !important;
+.card-custom p,
+.card-custom .text-muted {
+    color: var(--netflix-light-gray) !important;
 }
 
 .card-header-custom {
@@ -145,498 +353,585 @@ body {
     color: white;
     padding: 20px;
     border: none;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1.2rem;
+}
+
+/* Bootstrap cards override */
+.card {
+    background: var(--netflix-dark-gray);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    color: var(--netflix-text);
+}
+
+.card-body {
+    color: var(--netflix-text);
+}
+
+.card-header {
+    background: rgba(102, 126, 234, 0.1);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+    color: var(--netflix-white);
 }
 
 /* Service Cards */
 .service-card {
+    background: var(--netflix-dark-gray);
+    border-radius: 8px;
+    padding: 20px;
     transition: all 0.3s ease;
     cursor: pointer;
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
+    border: 2px solid transparent;
 }
 
 .service-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.service-logo {
-    width: 100%;
-    height: 150px;
-    object-fit: contain;
-    padding: 20px;
-    background: white;
-}
-
-/* Service Cards Featured */
-.service-card-featured {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    background: white;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.service-card-featured:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-}
-
-.service-card-featured .card-body {
-    transition: all 0.3s ease;
-}
-
-.service-card-featured:hover .card-body {
-    background: rgba(99, 102, 241, 0.05);
-}
-
-/* Step Numbers */
-.step-number {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--gradient-primary);
-    color: white;
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-/* Plan Cards */
-.plan-card {
-    border: 2px solid #e2e8f0;
-    border-radius: 15px;
-    transition: all 0.3s ease;
-    height: 100%;
-}
-
-.plan-card:hover {
     border-color: var(--primary-color);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
 }
 
-.plan-price {
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: #1e293b;
-    line-height: 1;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.service-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
 }
 
-.plan-features {
-    list-style: none;
-    padding: 0;
-}
-
-.plan-features li {
-    padding: 10px 0;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.plan-features li:last-child {
-    border-bottom: none;
-}
-
-/* ============================================
-   BADGES Y ETIQUETAS
-   ============================================ */
-.badge-points {
-    background: var(--gradient-warning);
-    padding: 8px 15px;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.badge-status {
-    padding: 5px 15px;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.badge-status.activa {
-    background: #d1fae5;
-    color: var(--success);
-}
-
-.badge-status.pendiente {
-    background: #fef3c7;
-    color: var(--warning);
-}
-
-.badge-status.vencida {
-    background: #fee2e2;
-    color: var(--danger);
-}
-
-.badge-status.cancelada {
-    background: #f1f5f9;
-    color: var(--text-light);
-}
-
-/* ============================================
-   ALERTS
-   ============================================ */
-.alert {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* ============================================
-   HERO SECTION
-   ============================================ */
-.hero-section {
-    padding: 80px 0;
-    text-align: center;
+/* Plan Badge */
+.plan-badge {
+    background: linear-gradient(135deg, var(--netflix-red) 0%, var(--netflix-red-dark) 100%);
     color: white;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.hero-subtitle {
-    font-size: 1.3rem;
-    margin-bottom: 30px;
-    opacity: 0.95;
-}
-
-/* ============================================
-   DASHBOARD
-   ============================================ */
-.dashboard-stat-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.dashboard-stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.stat-label {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* ============================================
-   TABLES
-   ============================================ */
-.table-custom {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.table-custom thead {
-    background: var(--gradient-primary);
-    color: white;
-}
-
-.table-custom tbody tr {
-    transition: all 0.2s ease;
-}
-
-.table-custom tbody tr:hover {
-    background: #f8fafc;
-    transform: scale(1.01);
-}
-
-/* ============================================
-   FORMS
-   ============================================ */
-.form-custom {
-    background: white;
-    padding: 30px;
+    padding: 6px 16px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.form-label-custom {
-    font-weight: 600;
-    color: var(--text-dark);
+/* ============================================
+   FORMS - Estilo Netflix
+   ============================================ */
+.form-control,
+.form-select {
+    background: var(--netflix-gray);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--netflix-white);
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: var(--netflix-gray);
+    border-color: var(--netflix-red);
+    color: var(--netflix-white);
+    box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--netflix-light-gray);
+}
+
+.form-label {
+    color: var(--netflix-white);
+    font-weight: 500;
     margin-bottom: 8px;
 }
 
-.form-control-custom {
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 12px 15px;
-    transition: all 0.3s ease;
+/* ============================================
+   ALERTS - Estilo Netflix
+   ============================================ */
+.alert {
+    border-radius: 4px;
+    border: none;
+    padding: 15px 20px;
+    font-weight: 500;
 }
 
-.form-control-custom:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+.alert-success {
+    background: rgba(70, 211, 105, 0.15);
+    color: var(--success);
+    border-left: 4px solid var(--success);
+}
+
+.alert-danger {
+    background: rgba(229, 9, 20, 0.15);
+    color: var(--netflix-red);
+    border-left: 4px solid var(--netflix-red);
+}
+
+.alert-warning {
+    background: rgba(255, 160, 10, 0.15);
+    color: var(--warning);
+    border-left: 4px solid var(--warning);
+}
+
+.alert-info {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--purple);
+    border-left: 4px solid var(--purple);
+}
+
+/* ============================================
+   TABLES - Estilo Netflix
+   ============================================ */
+.table {
+    color: var(--netflix-text);
+}
+
+.table-dark {
+    background: var(--netflix-dark-gray);
+    color: var(--netflix-text);
+}
+
+.table-dark thead {
+    background: var(--netflix-black);
+    color: var(--netflix-white);
+    font-weight: 700;
+}
+
+.table-dark tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-dark tbody tr:hover {
+    background: var(--netflix-gray);
+}
+
+.table-hover tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.01);
+}
+
+.table-light thead {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none;
+}
+
+.table-light thead th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 /* ============================================
    FOOTER
    ============================================ */
 footer {
-    background: rgba(30, 41, 59, 0.95);
-    color: #e2e8f0;
-    padding: 30px 0;
-    margin-top: 50px;
+    background: var(--netflix-black);
+    color: var(--netflix-light-gray);
+    padding: 40px 0 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 60px;
 }
 
 footer a {
+    color: var(--netflix-light-gray);
+    text-decoration: none;
     transition: color 0.3s ease;
 }
 
 footer a:hover {
-    color: #a78bfa !important;
+    color: var(--netflix-white);
 }
 
 /* ============================================
-   LOADING ANIMATION
+   DASHBOARD
    ============================================ */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Spinner grande para páginas */
-.spinner-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-}
-
-.spinner-large {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(99, 102, 241, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--primary-color);
-    animation: spin 1s ease-in-out infinite;
-}
-
-/* ============================================
-   CATEGORY ICONS
-   ============================================ */
-.category-icon {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-}
-
-/* ============================================
-   SUSCRIPTION STATUS
-   ============================================ */
-.suscription-item {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+.dashboard-card {
+    background: var(--netflix-dark-gray);
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
 }
 
-.suscription-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+.dashboard-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-    .navbar-brand {
-        font-size: 1.2rem;
-    }
-    
-    .content-wrapper {
-        padding: 15px 0;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    .stat-value {
-        font-size: 2rem;
-    }
-    
-    .plan-price {
-        font-size: 2rem;
-    }
+.dashboard-stat {
+    text-align: center;
+    padding: 20px;
 }
 
-@media (max-width: 576px) {
-    .card-custom {
-        border-radius: 15px;
-    }
-    
-    .form-custom {
-        padding: 20px;
-    }
-    
-    .dashboard-stat-card {
-        margin-bottom: 15px;
-    }
+.dashboard-stat .stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    display: block;
 }
 
-/* ============================================
-   UTILITIES
-   ============================================ */
-.text-gradient {
+.dashboard-stat .stat-label {
+    font-size: 0.95rem;
+    color: var(--netflix-light-gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Dashboard Stat Cards - Estilo moderno */
+.dashboard-stat-card {
+    background: var(--netflix-dark-gray);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.dashboard-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    border-color: var(--primary-color);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
+.stat-label {
+    color: var(--netflix-light-gray);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+/* ============================================
+   SUSCRIPCIONES
+   ============================================ */
+.subscription-card {
+    background: linear-gradient(135deg, var(--netflix-dark-gray) 0%, var(--netflix-gray) 100%);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.subscription-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.subscription-card.active {
+    border-left-color: var(--success);
+}
+
+.subscription-card.pending {
+    border-left-color: var(--warning);
+}
+
+.subscription-card.cancelled {
+    border-left-color: var(--netflix-light-gray);
+    opacity: 0.7;
+}
+
+/* Progress bars */
+.progress {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: var(--gradient-primary);
+    transition: width 0.6s ease;
+}
+
+.progress-bar.bg-success {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%) !important;
+}
+
+.progress-bar.bg-warning {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+.progress-bar.bg-danger {
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge.bg-success {
+    background: var(--success) !important;
+}
+
+.badge.bg-danger {
+    background: var(--netflix-red) !important;
+}
+
+.badge.bg-warning {
+    background: var(--warning) !important;
+    color: var(--netflix-black) !important;
+}
+
+.badge.bg-info {
+    background: var(--purple) !important;
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+.text-netflix-red {
+    color: var(--netflix-red) !important;
+}
+
+.bg-netflix-dark {
+    background-color: var(--netflix-dark-gray) !important;
+}
+
+.bg-netflix-black {
+    background-color: var(--netflix-black) !important;
+}
+
+/* Gradientes de texto */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+/* Fondos con gradiente */
 .bg-gradient-primary {
     background: var(--gradient-primary) !important;
 }
 
-.shadow-custom {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
 }
 
-.rounded-custom {
-    border-radius: 20px;
+.bg-gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--netflix-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--netflix-gray);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--netflix-red);
 }
 
 /* ============================================
-   PROJECT PAGE STYLES
+   ANIMACIONES
    ============================================ */
-.danger-zone {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.warning-zone {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
 }
 
-.technique-card {
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-section p {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-stat .stat-number {
+        font-size: 2rem;
+    }
+    
+    .dashboard-stat-card {
+        margin-bottom: 15px;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+/* ============================================
+   ICONOS Y ELEMENTOS ADICIONALES
+   ============================================ */
+.stat-icon i {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Iconos en listas */
+.fa-check-circle {
+    color: var(--success);
+}
+
+.fa-times-circle {
+    color: var(--danger);
+}
+
+.fa-clock {
+    color: var(--warning);
+}
+
+.fa-star {
+    color: var(--gold);
+}
+
+.fa-coins {
+    color: var(--gold);
+}
+
+/* Animación suave para elementos interactivos */
+.btn,
+.card,
+.card-custom,
+.service-card,
+.dashboard-stat-card,
+.subscription-card {
+    will-change: transform;
+}
+
+/* Mejora de legibilidad */
+small,
+.small {
+    color: var(--netflix-light-gray);
+}
+
+/* Override de Bootstrap para mantener temática */
+.text-muted {
+    color: var(--netflix-light-gray) !important;
+}
+
+.text-dark {
+    color: var(--netflix-text) !important;
+}
+
+/* ============================================
+   SEARCH BAR
+   ============================================ */
+.search-container {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input {
+    background: var(--netflix-gray);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--netflix-white);
+    padding: 15px 50px 15px 20px;
+    border-radius: 30px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.search-input:focus {
+    border-color: var(--netflix-red);
+    background: var(--netflix-dark-gray);
+    outline: none;
+}
+
+.search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--netflix-red);
     border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 700;
     transition: all 0.3s ease;
 }
 
-.technique-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
-
-.section-card {
-    background: white;
-}
-
-.hero-project {
-    background: var(--gradient-primary);
-    color: white;
-    padding: 100px 0;
-    margin-bottom: 50px;
-}
-
-.stat-number {
-    font-size: 3rem;
-    font-weight: 700;
+.search-btn:hover {
+    background: var(--netflix-red-dark);
+    transform: translateY(-50%) scale(1.05);
 }
 
 /* ============================================
-   LOGOUT BUTTON
+   CATEGORY FILTERS
    ============================================ */
-.dropdown-item.logout-btn {
-    border: none;
-    background: transparent;
-    width: 100%;
-    text-align: left;
+.category-filter {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    background: var(--netflix-gray);
+    border: 2px solid transparent;
+    color: var(--netflix-text);
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
-.dropdown-item.logout-btn:hover {
-    background-color: #f8d7da;
-}
-
-/* ============================================
-   DROPDOWN FIX
-   ============================================ */
-.dropdown-menu {
-    z-index: 9999 !important;
-}
-
-.navbar {
-    z-index: 1030 !important;
-}
-
-/* ============================================
-   FORM CUSTOM STYLES
-   ============================================ */
-.form-custom {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-}
-
-.form-label-custom {
-    font-weight: 600;
-    color: var(--text-dark);
-    margin-bottom: 8px;
-}
-
-.form-control-custom {
-    border: 2px solid #e2e8f0 !important;
-    border-radius: 10px !important;
-    padding: 12px 15px !important;
-    transition: all 0.3s ease !important;
-    width: 100% !important;
-    display: block !important;
-}
-
-.form-control-custom:focus {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25) !important;
-    outline: none !important;
-}
-
-.input-group .form-control-custom {
-    border-radius: 10px 0 0 10px !important;
-}
-
-.input-group .btn {
-    border-radius: 0 10px 10px 0 !important;
+.category-btn:hover,
+.category-btn.active {
+    background: var(--netflix-red);
+    color: var(--netflix-white);
+    border-color: var(--netflix-red);
+    transform: translateY(-2px);
 }

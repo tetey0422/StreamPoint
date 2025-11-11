@@ -143,3 +143,19 @@ LOGOUT_REDIRECT_URL = 'public:index'
 # Configuración de sesiones
 SESSION_COOKIE_AGE = 1209600  # 2 semanas en segundos
 SESSION_SAVE_EVERY_REQUEST = False
+
+# ============================================
+# Configuraciones de Email
+# ============================================
+
+# Configuración para desarrollo (imprime emails en consola)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'StreamPoint <noreply@streampoint.com>'
+
+# Para producción, usar SMTP real:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'tu-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicación'

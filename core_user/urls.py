@@ -15,6 +15,12 @@ urlpatterns = [
     
     # Suscripciones
     path('suscribirse/<int:plan_id>/', views.iniciar_suscripcion, name='iniciar_suscripcion'),
+    path('pasarela-pago/', views.pasarela_pago, name='pasarela_pago'),
     path('renovar/<int:suscripcion_id>/', views.renovar_suscripcion, name='renovar_suscripcion'),
     path('cancelar/<int:suscripcion_id>/', views.cancelar_suscripcion, name='cancelar_suscripcion'),
+    
+    # Registro de compras
+    path('registrar-compra/', views.registrar_compra, name='registrar_compra'),
+    path('mis-compras/', views.mis_registros_compra, name='mis_registros_compra'),
+    path('compra/<int:registro_id>/', views.detalle_registro_compra, name='detalle_registro_compra'),
 ]

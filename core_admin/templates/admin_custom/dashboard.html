@@ -72,7 +72,7 @@
                 <i class="fas fa-bolt me-2"></i>Acciones Rápidas
             </h3>
             <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <a href="{% url 'admin_custom:validar_suscripciones' %}" class="btn btn-outline-custom w-100 py-3">
                         <i class="fas fa-check-double d-block mb-2" style="font-size: 2rem;"></i>
                         <strong>Validar Suscripciones</strong>
@@ -81,14 +81,30 @@
                         </small>
                     </a>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <a href="{% url 'admin_custom:gestionar_compras' %}" class="btn btn-outline-custom w-100 py-3">
+                        <i class="fas fa-shopping-cart d-block mb-2" style="font-size: 2rem;"></i>
+                        <strong>Gestionar Compras</strong>
+                        <small class="d-block text-muted mt-1">Revisar compras registradas</small>
+                    </a>
+                </div>
+                <div class="col-md-3">
                     <a href="{% url 'admin_custom:gestionar_puntos' %}" class="btn btn-outline-custom w-100 py-3">
                         <i class="fas fa-coins d-block mb-2" style="font-size: 2rem;"></i>
                         <strong>Gestionar Puntos</strong>
                         <small class="d-block text-muted mt-1">Agregar o remover puntos</small>
                     </a>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <a href="{% url 'admin_custom:gestionar_correos' %}" class="btn btn-outline-custom w-100 py-3">
+                        <i class="fas fa-envelope-circle-check d-block mb-2" style="font-size: 2rem;"></i>
+                        <strong>Correos Verificados</strong>
+                        <small class="d-block text-muted mt-1">Gestionar verificación</small>
+                    </a>
+                </div>
+            </div>
+            <div class="row g-3 mt-2">
+                <div class="col-md-3">
                     <a href="{% url 'admin_custom:configurar_recompensas' %}" class="btn btn-outline-custom w-100 py-3">
                         <i class="fas fa-cog d-block mb-2" style="font-size: 2rem;"></i>
                         <strong>Configurar Sistema</strong>

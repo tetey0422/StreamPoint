@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Compra - StreamPoint{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detalle-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+    
+    .detalle-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .card-header h2 {
+        margin: 0 0 10px 0;
+        font-weight: bold;
+    }
+    
+    .estado-badge {
+        display: inline-block;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    
+    .estado-pendiente {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .estado-aprobada {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .estado-rechazada {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .card-body {
+        padding: 30px;
+    }
+    
+    .info-section {
+        margin-bottom: 30px;
+    }
+    
+    .info-section h4 {
+        color: #667eea;
+        font-weight: bold;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .info-item {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    
+    .info-value {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .comprobante-section {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    
+    .comprobante-section img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .alert-custom {
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    
+    .alert-success-custom {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        color: #155724;
+    }
+    
+    .alert-warning-custom {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        color: #856404;
+    }
+    
+    .alert-danger-custom {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        color: #721c24;
+    }
+    
+    .btn-volver {
+        background: #6c757d;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+        transition: background 0.3s;
+    }
+    
+    .btn-volver:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+    
+    .timeline-item {
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .timeline-date {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 600;
+    }
+    
+    .timeline-content {
+        margin-top: 5px;
+        color: #333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detalle-container">
+    <div class="detalle-card">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-receipt"></i> 
+                Detalle de Compra
+            </h2>
+            <span class="estado-badge estado-{{ registro.estado }}">
+                {% if registro.estado == 'pendiente' %}
+                    <i class="fas fa-clock"></i> Pendiente de Revisión
+                {% elif registro.estado == 'aprobada' %}
+                    <i class="fas fa-check-circle"></i> Aprobada
+                {% elif registro.estado == 'rechazada' %}
+                    <i class="fas fa-times-circle"></i> Rechazada
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="card-body">
+            <!-- Información del Servicio -->
+            <div class="info-section">
+                <h4><i class="fas fa-tv"></i> Información del Servicio</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Servicio</div>
+                        <div class="info-value">{{ registro.servicio.nombre }}</div>
+                    </div>
+                    {% if registro.plan %}
+                    <div class="info-item">
+                        <div class="info-label">Plan</div>
+                        <div class="info-value">{{ registro.plan.nombre }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="info-item">
+                        <div class="info-label">Monto Pagado</div>
+                        <div class="info-value">${{ registro.monto_pagado|floatformat:2 }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Fecha de Compra</div>
+                        <div class="info-value">{{ registro.fecha_compra|date:"d/m/Y" }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Información Personal -->
+            <div class="info-section">
+                <h4><i class="fas fa-user"></i> Información Personal</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nombre Completo</div>
+                        <div class="info-value">{{ registro.nombre_completo }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Correo Electrónico</div>
+                        <div class="info-value">{{ registro.correo }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Usuario en App</div>
+                        <div class="info-value">{{ registro.nombre_usuario_app }}</div>
+                    </div>
+                    {% if registro.telefono %}
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">{{ registro.telefono }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Descripción -->
+            {% if registro.descripcion %}
+            <div class="info-section">
+                <h4><i class="fas fa-align-left"></i> Descripción</h4>
+                <div class="info-item">
+                    <p style="margin: 0;">{{ registro.descripcion }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Comprobante -->
+            {% if registro.comprobante %}
+            <div class="info-section">
+                <h4><i class="fas fa-file-image"></i> Comprobante de Pago</h4>
+                <div class="comprobante-section">
+                    <img src="{{ registro.comprobante.url }}" alt="Comprobante de pago">
+                    <br>
+                    <a href="{{ registro.comprobante.url }}" target="_blank" class="btn btn-sm btn-primary" style="margin-top: 15px;">
+                        <i class="fas fa-download"></i> Descargar Comprobante
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Estado y Revisión -->
+            <div class="info-section">
+                <h4><i class="fas fa-history"></i> Historial</h4>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <i class="fas fa-calendar"></i> {{ registro.fecha_registro|date:"d/m/Y H:i" }}
+                        </div>
+                        <div class="timeline-content">
+                            <strong>Compra registrada</strong>
+                        </div>
+                    </div>
+                    
+                    {% if registro.fecha_revision %}
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <i class="fas fa-calendar"></i> {{ registro.fecha_revision|date:"d/m/Y H:i" }}
+                        </div>
+                        <div class="timeline-content">
+                            <strong>Compra revisada por {{ registro.revisado_por.username }}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Alertas según el estado -->
+            {% if registro.estado == 'pendiente' %}
+            <div class="alert-custom alert-warning-custom">
+                <i class="fas fa-clock fa-2x" style="float: left; margin-right: 15px;"></i>
+                <strong>Tu compra está en revisión</strong><br>
+                El administrador la revisará pronto y te notificará cuando sea aprobada.
+            </div>
+            {% elif registro.estado == 'aprobada' %}
+            <div class="alert-custom alert-success-custom">
+                <i class="fas fa-check-circle fa-2x" style="float: left; margin-right: 15px;"></i>
+                <strong>¡Compra aprobada!</strong><br>
+                Se te han otorgado <strong>{{ registro.puntos_otorgados }} puntos</strong> por esta compra.
+            </div>
+            {% elif registro.estado == 'rechazada' %}
+            <div class="alert-custom alert-danger-custom">
+                <i class="fas fa-times-circle fa-2x" style="float: left; margin-right: 15px;"></i>
+                <strong>Compra rechazada</strong><br>
+                {% if registro.notas_admin %}
+                    Motivo: {{ registro.notas_admin }}
+                {% else %}
+                    Por favor, contacta al administrador para más información.
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div style="text-align: center;">
+                <a href="{% url 'user:mis_registros_compra' %}" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver a Mis Compras
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

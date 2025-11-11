@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestionar Correos Verificados - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4" style="color: #e50914;">
+                <i class="fas fa-envelope-circle-check"></i> Gestionar Correos Verificados
+            </h2>
+            <p class="text-white-50">
+                Administra los correos electrónicos verificados para cada servicio de streaming.
+                Solo usuarios con correos verificados podrán suscribirse.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Formulario para agregar correo -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card bg-dark border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Agregar Correo Verificado</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="agregar">
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-white">Correo Electrónico *</label>
+                            <input type="email" class="form-control bg-dark text-white border-secondary" 
+                                   name="correo" placeholder="ejemplo@correo.com" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-white">Servicio de Streaming *</label>
+                            <select class="form-select bg-dark text-white border-secondary" 
+                                    name="servicio_id" required>
+                                <option value="">-- Seleccione un servicio --</option>
+                                {% for servicio in servicios %}
+                                <option value="{{ servicio.id }}">{{ servicio.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-white">Notas (Opcional)</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" 
+                                      name="notas" rows="2" 
+                                      placeholder="Información adicional sobre este correo"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-check"></i> Agregar Correo Verificado
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estadísticas -->
+        <div class="col-lg-6">
+            <div class="card bg-dark border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-secondary">
+                        <span class="text-white-50">Total de Correos Verificados:</span>
+                        <strong class="text-warning">{{ correos.count }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-secondary">
+                        <span class="text-white-50">Correos Activos:</span>
+                        <strong class="text-success">{{ correos|length }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white-50">Servicios Disponibles:</span>
+                        <strong class="text-info">{{ servicios.count }}</strong>
+                    </div>
+                    
+                    <div class="alert alert-info mt-4" role="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Importante:</strong> Los usuarios solo podrán comprar suscripciones
+                        si su correo del servicio está registrado aquí.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tabla de correos verificados -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-dark border-light">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Lista de Correos Verificados</h5>
+                </div>
+                <div class="card-body">
+                    {% if correos %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-striped">
+                            <thead class="table-danger">
+                                <tr>
+                                    <th>#</th>
+                                    <th><i class="fas fa-envelope"></i> Correo</th>
+                                    <th><i class="fas fa-tv"></i> Servicio</th>
+                                    <th><i class="fas fa-calendar"></i> Fecha Agregado</th>
+                                    <th><i class="fas fa-user"></i> Agregado Por</th>
+                                    <th><i class="fas fa-toggle-on"></i> Estado</th>
+                                    <th><i class="fas fa-sticky-note"></i> Notas</th>
+                                    <th><i class="fas fa-cog"></i> Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for correo in correos %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <strong class="text-warning">{{ correo.correo }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ correo.servicio.nombre }}</span>
+                                    </td>
+                                    <td class="text-white-50">
+                                        {{ correo.fecha_agregado|date:"d/m/Y H:i" }}
+                                    </td>
+                                    <td class="text-white-50">
+                                        {{ correo.agregado_por.username|default:"Sistema" }}
+                                    </td>
+                                    <td>
+                                        {% if correo.activo %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle"></i> Activo
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-times-circle"></i> Inactivo
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-white-50">{{ correo.notas|default:"Sin notas"|truncatewords:5 }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <!-- Toggle activo/inactivo -->
+                                            <form method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="accion" value="toggle_activo">
+                                                <input type="hidden" name="correo_id" value="{{ correo.id }}">
+                                                <button type="submit" 
+                                                        class="btn {% if correo.activo %}btn-warning{% else %}btn-success{% endif %}"
+                                                        title="{% if correo.activo %}Desactivar{% else %}Activar{% endif %}">
+                                                    <i class="fas fa-{% if correo.activo %}pause{% else %}play{% endif %}"></i>
+                                                </button>
+                                            </form>
+                                            
+                                            <!-- Eliminar -->
+                                            <form method="post" class="d-inline"
+                                                  onsubmit="return confirm('¿Está seguro de eliminar este correo verificado?');">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="accion" value="eliminar">
+                                                <input type="hidden" name="correo_id" value="{{ correo.id }}">
+                                                <button type="submit" class="btn btn-danger" title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No hay correos verificados registrados. Agregue el primer correo usando el formulario de arriba.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-dark th {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .table-dark td {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #2d3748;
+        color: white;
+        border-color: #e50914;
+        box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
+    }
+</style>
+{% endblock %}

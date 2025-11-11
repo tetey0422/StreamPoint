@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
 from core_public.models import PlanSuscripcion
+from decimal import Decimal
 
 
 class PerfilUsuario(models.Model):
@@ -87,6 +88,7 @@ class Suscripcion(models.Model):
     
     # Información del servicio
     email_servicio = models.EmailField(help_text="Email usado en el servicio de streaming")
+    usuario_servicio = models.CharField(max_length=200, blank=True, help_text="Nombre de usuario en el servicio (Netflix, Spotify, etc.)")
     notas = models.TextField(blank=True)
     
     class Meta:
@@ -150,3 +152,281 @@ class TransaccionPuntos(models.Model):
     
     def __str__(self):
         return f"{self.perfil.user.username} - {self.tipo} {self.cantidad} pts"
+
+
+class Factura(models.Model):
+    """
+    Información de facturación para cada compra de suscripción.
+    """
+    METODO_PAGO_CHOICES = [
+        ('tarjeta', 'Tarjeta de crédito/débito'),
+        ('pse', 'PSE'),
+        ('efectivo', 'Efectivo'),
+        ('puntos', 'Puntos'),
+        ('mixto', 'Mixto (Puntos + Otro método)'),
+    ]
+    
+    # Relación con suscripción
+    suscripcion = models.OneToOneField(
+        'Suscripcion',
+        on_delete=models.CASCADE,
+        related_name='factura',
+        null=True,
+        blank=True
+    )
+    
+    # Información del comprador
+    nombre_completo = models.CharField(max_length=200, help_text="Nombre completo del comprador")
+    telefono = models.CharField(max_length=15, help_text="Teléfono de contacto")
+    direccion = models.TextField(help_text="Dirección de facturación")
+    correo = models.EmailField(help_text="Correo electrónico para confirmación")
+    
+    # Información de pago
+    metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES)
+    monto_total = models.DecimalField(max_digits=10, decimal_places=2, help_text="Monto total de la compra")
+    
+    # Pago con puntos
+    puntos_usados = models.IntegerField(default=0, help_text="Puntos utilizados en el pago")
+    valor_puntos = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text="Valor en pesos de los puntos usados"
+    )
+    monto_pendiente = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text="Monto restante a pagar por otro método"
+    )
+    metodo_pago_secundario = models.CharField(
+        max_length=20,
+        choices=METODO_PAGO_CHOICES,
+        blank=True,
+        null=True,
+        help_text="Método de pago para el monto restante (pago mixto)"
+    )
+    
+    # Control
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    pagado = models.BooleanField(default=False, help_text="Si el pago ha sido confirmado")
+    fecha_pago = models.DateTimeField(null=True, blank=True)
+    numero_factura = models.CharField(max_length=50, unique=True, blank=True)
+    
+    class Meta:
+        verbose_name = "Factura"
+        verbose_name_plural = "Facturas"
+        ordering = ['-fecha_creacion']
+    
+    def __str__(self):
+        return f"Factura #{self.numero_factura} - {self.nombre_completo}"
+    
+    def save(self, *args, **kwargs):
+        # Generar número de factura automáticamente
+        if not self.numero_factura:
+            from django.utils.crypto import get_random_string
+            timestamp = timezone.now().strftime('%Y%m%d%H%M%S')
+            random_str = get_random_string(4, allowed_chars='0123456789')
+            self.numero_factura = f"FAC-{timestamp}-{random_str}"
+        super().save(*args, **kwargs)
+
+
+class RegistroCompra(models.Model):
+    """
+    Registro manual de compras realizadas por usuarios.
+    El admin revisa y aprueba estas compras para otorgar puntos.
+    """
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente de revisión'),
+        ('aprobada', 'Aprobada'),
+        ('rechazada', 'Rechazada'),
+    ]
+    
+    # Información del usuario
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='registros_compra',
+        help_text="Usuario que registra la compra"
+    )
+    nombre_completo = models.CharField(max_length=200, help_text="Nombre completo")
+    correo = models.EmailField(help_text="Correo electrónico")
+    nombre_usuario_app = models.CharField(
+        max_length=200,
+        help_text="Nombre de usuario en la app del servicio (Netflix, Spotify, etc.)"
+    )
+    telefono = models.CharField(max_length=15, blank=True, help_text="Teléfono de contacto")
+    
+    # Información de la compra
+    servicio = models.ForeignKey(
+        'core_public.ServicioStreaming',
+        on_delete=models.CASCADE,
+        related_name='registros_compra',
+        help_text="Servicio de streaming adquirido"
+    )
+    plan = models.ForeignKey(
+        'core_public.PlanSuscripcion',
+        on_delete=models.CASCADE,
+        related_name='registros_compra',
+        null=True,
+        blank=True,
+        help_text="Plan específico (opcional)"
+    )
+    monto_pagado = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        help_text="Monto pagado por la compra"
+    )
+    fecha_compra = models.DateField(help_text="Fecha en que realizó la compra")
+    comprobante = models.FileField(
+        upload_to='comprobantes/',
+        blank=True,
+        null=True,
+        help_text="Captura de pantalla o comprobante de pago (opcional)"
+    )
+    descripcion = models.TextField(
+        blank=True,
+        help_text="Detalles adicionales sobre la compra"
+    )
+    
+    # Control y estado
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='pendiente'
+    )
+    es_primera_compra = models.BooleanField(
+        default=False,
+        help_text="Si es la primera compra del usuario en este servicio"
+    )
+    puntos_sugeridos = models.IntegerField(
+        default=0,
+        help_text="Puntos calculados automáticamente según el plan"
+    )
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    fecha_revision = models.DateTimeField(null=True, blank=True)
+    revisado_por = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='compras_revisadas',
+        help_text="Admin que revisó la compra"
+    )
+    puntos_otorgados = models.IntegerField(
+        default=0,
+        help_text="Puntos otorgados al aprobar"
+    )
+    notas_admin = models.TextField(
+        blank=True,
+        help_text="Notas del administrador"
+    )
+    
+    class Meta:
+        verbose_name = "Registro de Compra"
+        verbose_name_plural = "Registros de Compras"
+        ordering = ['-fecha_registro']
+    
+    def __str__(self):
+        return f"{self.usuario.username} - {self.servicio.nombre} - {self.get_estado_display()}"
+    
+    def save(self, *args, **kwargs):
+        """
+        Al guardar, detecta automáticamente si es primera compra
+        y calcula los puntos sugeridos según el plan
+        """
+        if not self.pk:  # Solo en la creación
+            # Detectar si es primera compra en este servicio
+            compras_anteriores = RegistroCompra.objects.filter(
+                usuario=self.usuario,
+                servicio=self.servicio,
+                estado='aprobada'
+            ).exists()
+            
+            # También revisar suscripciones anteriores
+            suscripciones_anteriores = Suscripcion.objects.filter(
+                usuario=self.usuario,
+                plan__servicio=self.servicio,
+                validada=True
+            ).exists()
+            
+            self.es_primera_compra = not (compras_anteriores or suscripciones_anteriores)
+            
+            # Calcular puntos sugeridos según el plan
+            if self.plan:
+                if self.es_primera_compra:
+                    self.puntos_sugeridos = self.plan.puntos_primera_compra
+                else:
+                    self.puntos_sugeridos = self.plan.puntos_renovacion
+            else:
+                # Si no hay plan específico, usar valores por defecto
+                from core_public.models import ConfiguracionRecompensa
+                try:
+                    config = ConfiguracionRecompensa.objects.first()
+                    if config:
+                        if self.es_primera_compra:
+                            self.puntos_sugeridos = config.puntos_primera_compra
+                        else:
+                            self.puntos_sugeridos = config.puntos_renovacion
+                except:
+                    # Valores por defecto si no hay configuración
+                    self.puntos_sugeridos = 100 if self.es_primera_compra else 50
+        
+        super().save(*args, **kwargs)
+    
+    def calcular_puntos_automaticos(self):
+        """
+        Calcula los puntos que deberían otorgarse automáticamente
+        """
+        if self.plan:
+            if self.es_primera_compra:
+                return self.plan.puntos_primera_compra
+            else:
+                return self.plan.puntos_renovacion
+        else:
+            # Si no hay plan, usar configuración global
+            from core_public.models import ConfiguracionRecompensa
+            try:
+                config = ConfiguracionRecompensa.objects.first()
+                if config:
+                    if self.es_primera_compra:
+                        return config.puntos_primera_compra
+                    else:
+                        return config.puntos_renovacion
+            except:
+                pass
+        
+        # Valores por defecto
+        return 100 if self.es_primera_compra else 50
+    
+    def aprobar(self, admin_user, puntos=None):
+        """
+        Aprobar la compra y otorgar puntos.
+        Si no se especifican puntos, usa los puntos sugeridos automáticamente.
+        """
+        # Si no se especifican puntos, usar los sugeridos
+        if puntos is None:
+            puntos = self.puntos_sugeridos if self.puntos_sugeridos > 0 else self.calcular_puntos_automaticos()
+        
+        self.estado = 'aprobada'
+        self.fecha_revision = timezone.now()
+        self.revisado_por = admin_user
+        self.puntos_otorgados = puntos
+        self.save()
+        
+        # Otorgar puntos al usuario
+        perfil, created = PerfilUsuario.objects.get_or_create(user=self.usuario)
+        tipo_compra = "Primera compra" if self.es_primera_compra else "Renovación"
+        perfil.agregar_puntos(
+            puntos,
+            f"{tipo_compra} aprobada - {self.servicio.nombre}"
+        )
+    
+    def rechazar(self, admin_user, motivo=""):
+        """Rechazar la compra"""
+        self.estado = 'rechazada'
+        self.fecha_revision = timezone.now()
+        self.revisado_por = admin_user
+        if motivo:
+            self.notas_admin = motivo
+        self.save()

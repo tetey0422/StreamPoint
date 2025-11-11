@@ -28,7 +28,7 @@
             </div>
             <div class="stat-value">{{ perfil.puntos_disponibles }}</div>
             <div class="stat-label">Puntos Disponibles</div>
-            <small class="text-muted d-block mt-2">
+            <small class="d-block mt-2">
                 {{ perfil.puntos_disponibles|puntos_a_pesos }} COP
             </small>
         </div>
@@ -51,6 +51,34 @@
             </div>
             <div class="stat-value">{{ perfil.puntos_totales }}</div>
             <div class="stat-label">Puntos Totales Ganados</div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4">
+            <h5 class="text-gradient mb-3">
+                <i class="fas fa-bolt me-2"></i>Acciones Rápidas
+            </h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <a href="{% url 'user:registrar_compra' %}" class="btn btn-primary-custom w-100 py-3">
+                        <i class="fas fa-shopping-cart me-2"></i>Registrar Nueva Compra
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'user:mis_registros_compra' %}" class="btn btn-outline-primary w-100 py-3">
+                        <i class="fas fa-receipt me-2"></i>Mis Compras
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'public:catalogo' %}" class="btn btn-outline-primary w-100 py-3">
+                        <i class="fas fa-th me-2"></i>Ver Catálogo
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -240,11 +268,11 @@
 <!-- Info sobre puntos -->
 <div class="row mt-4">
     <div class="col-12">
-        <div class="card-custom p-4 bg-gradient-warning text-white">
+        <div class="card-custom p-4">
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h5 class="mb-2">
-                        <i class="fas fa-lightbulb me-2"></i>¿Sabías que...?
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>¿Sabías que...?
                     </h5>
                     <p class="mb-0">
                         Cada 10 puntos equivalen a $1 COP. Con tus {{ perfil.puntos_disponibles }} puntos disponibles, 
@@ -252,7 +280,7 @@
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{% url 'public:catalogo' %}" class="btn btn-light">
+                    <a href="{% url 'public:catalogo' %}" class="btn btn-primary-custom">
                         <i class="fas fa-shopping-cart me-2"></i>Canjear Puntos
                     </a>
                 </div>

@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrar Compra - StreamPoint{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: var(--netflix-dark-gray);
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        padding: 40px;
+        margin: 30px auto;
+        max-width: 800px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    }
+    
+    .form-header h2 {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .form-header p {
+        color: var(--netflix-light-gray);
+        font-size: 0.95rem;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        font-weight: 600;
+        color: var(--netflix-white);
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        padding: 10px 15px;
+        transition: all 0.3s;
+        background: var(--netflix-gray);
+        color: var(--netflix-white);
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        background: var(--netflix-gray);
+        color: var(--netflix-white);
+    }
+    
+    .help-text {
+        font-size: 0.85rem;
+        color: var(--netflix-light-gray);
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1rem;
+        transition: transform 0.3s;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .required-mark {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+    
+    .info-box {
+        background: rgba(102, 126, 234, 0.1);
+        border-left: 4px solid var(--primary-color);
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        color: var(--netflix-text);
+    }
+    
+    .info-box i {
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+    
+    .info-box ul {
+        color: var(--netflix-light-gray);
+    }
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+    }
+    
+    .errorlist li {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #e74c3c;
+    }
+    
+    select.form-control,
+    textarea.form-control {
+        background: var(--netflix-gray);
+        color: var(--netflix-white);
+        border-color: rgba(102, 126, 234, 0.2);
+    }
+    
+    select.form-control option {
+        background: var(--netflix-dark-gray);
+        color: var(--netflix-white);
+    }
+    
+    .form-control::placeholder {
+        color: var(--netflix-light-gray);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2><i class="fas fa-shopping-cart"></i> {{ titulo }}</h2>
+            <p>Registra tu compra y el administrador te otorgará puntos</p>
+        </div>
+        
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <strong>¿Cómo funciona?</strong>
+            <ul style="margin-top: 10px; margin-bottom: 0;">
+                <li>Completa el formulario con los datos de tu compra</li>
+                <li>Opcionalmente, adjunta un comprobante de pago</li>
+                <li>El administrador revisará tu compra</li>
+                <li>Una vez aprobada, recibirás tus puntos automáticamente</li>
+            </ul>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <h5 style="color: #667eea; margin-bottom: 20px;">
+                <i class="fas fa-user"></i> Información Personal
+            </h5>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.nombre_completo.label }} <span class="required-mark">*</span></label>
+                        {{ form.nombre_completo }}
+                        {% if form.nombre_completo.help_text %}
+                            <small class="help-text">{{ form.nombre_completo.help_text }}</small>
+                        {% endif %}
+                        {{ form.nombre_completo.errors }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.correo.label }} <span class="required-mark">*</span></label>
+                        {{ form.correo }}
+                        {% if form.correo.help_text %}
+                            <small class="help-text">{{ form.correo.help_text }}</small>
+                        {% endif %}
+                        {{ form.correo.errors }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.nombre_usuario_app.label }} <span class="required-mark">*</span></label>
+                        {{ form.nombre_usuario_app }}
+                        {% if form.nombre_usuario_app.help_text %}
+                            <small class="help-text">{{ form.nombre_usuario_app.help_text }}</small>
+                        {% endif %}
+                        {{ form.nombre_usuario_app.errors }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.telefono.label }}</label>
+                        {{ form.telefono }}
+                        {% if form.telefono.help_text %}
+                            <small class="help-text">{{ form.telefono.help_text }}</small>
+                        {% endif %}
+                        {{ form.telefono.errors }}
+                    </div>
+                </div>
+            </div>
+            
+            <hr style="margin: 30px 0;">
+            
+            <h5 style="color: #667eea; margin-bottom: 20px;">
+                <i class="fas fa-tv"></i> Información de la Compra
+            </h5>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.servicio.label }} <span class="required-mark">*</span></label>
+                        {{ form.servicio }}
+                        {% if form.servicio.help_text %}
+                            <small class="help-text">{{ form.servicio.help_text }}</small>
+                        {% endif %}
+                        {{ form.servicio.errors }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.plan.label }}</label>
+                        {{ form.plan }}
+                        {% if form.plan.help_text %}
+                            <small class="help-text">{{ form.plan.help_text }}</small>
+                        {% endif %}
+                        {{ form.plan.errors }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.monto_pagado.label }} <span class="required-mark">*</span></label>
+                        {{ form.monto_pagado }}
+                        {% if form.monto_pagado.help_text %}
+                            <small class="help-text">{{ form.monto_pagado.help_text }}</small>
+                        {% endif %}
+                        {{ form.monto_pagado.errors }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>{{ form.fecha_compra.label }} <span class="required-mark">*</span></label>
+                        {{ form.fecha_compra }}
+                        {% if form.fecha_compra.help_text %}
+                            <small class="help-text">{{ form.fecha_compra.help_text }}</small>
+                        {% endif %}
+                        {{ form.fecha_compra.errors }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.comprobante.label }}</label>
+                {{ form.comprobante }}
+                {% if form.comprobante.help_text %}
+                    <small class="help-text">{{ form.comprobante.help_text }}</small>
+                {% endif %}
+                {{ form.comprobante.errors }}
+            </div>
+            
+            <div class="form-group">
+                <label>{{ form.descripcion.label }}</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.help_text %}
+                    <small class="help-text">{{ form.descripcion.help_text }}</small>
+                {% endif %}
+                {{ form.descripcion.errors }}
+            </div>
+            
+            <button type="submit" class="btn btn-submit">
+                <i class="fas fa-paper-plane"></i> Registrar Compra
+            </button>
+            
+            <a href="{% url 'user:dashboard' %}" class="btn btn-cancel">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Cargar planes cuando se selecciona un servicio
+    document.getElementById('id_servicio').addEventListener('change', function() {
+        const servicioId = this.value;
+        const planSelect = document.getElementById('id_plan');
+        
+        if (servicioId) {
+            // Aquí puedes agregar AJAX para cargar planes específicos del servicio
+            // Por ahora, solo habilitamos el campo
+            planSelect.disabled = false;
+        } else {
+            planSelect.disabled = true;
+            planSelect.innerHTML = '<option value="">Selecciona un plan (opcional)</option>';
+        }
+    });
+</script>
+{% endblock %}

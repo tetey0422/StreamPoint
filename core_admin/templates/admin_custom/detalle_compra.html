@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Validar Suscripción - Admin{% endblock %}
+{% block title %}Detalle de Compra - Admin{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -44,8 +44,12 @@
         color: #856404;
     }
     
-    .estado-validada {
+    .estado-aprobada {
         color: #155724;
+    }
+    
+    .estado-rechazada {
+        color: #721c24;
     }
     
     .card-body {
@@ -181,6 +185,28 @@
         text-decoration: none;
     }
     
+    .comprobante-section {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .comprobante-section img {
+        max-width: 100%;
+        max-height: 500px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .alert-info-custom {
+        background: #d1ecf1;
+        border-left: 4px solid #0c5460;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
     .alert-success-custom {
         background: #d4edda;
         border-left: 4px solid #28a745;
@@ -189,6 +215,15 @@
         margin-bottom: 20px;
         color: #155724;
     }
+    
+    .alert-danger-custom {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        color: #721c24;
+    }
 </style>
 {% endblock %}
 
@@ -196,12 +231,14 @@
 <div class="detalle-container">
     <div class="detalle-card">
         <div class="card-header">
-            <h2><i class="fas fa-file-invoice"></i> Validar Suscripción #{{ suscripcion.id }}</h2>
-            <span class="estado-badge {% if suscripcion.validada %}estado-validada{% else %}estado-pendiente{% endif %}">
-                {% if suscripcion.validada %}
-                    <i class="fas fa-check-circle"></i> Validada
-                {% else %}
+            <h2><i class="fas fa-receipt"></i> Detalle de Compra #{{ compra.id }}</h2>
+            <span class="estado-badge estado-{{ compra.estado }}">
+                {% if compra.estado == 'pendiente' %}
                     <i class="fas fa-clock"></i> Pendiente
+                {% elif compra.estado == 'aprobada' %}
+                    <i class="fas fa-check-circle"></i> Aprobada
+                {% elif compra.estado == 'rechazada' %}
+                    <i class="fas fa-times-circle"></i> Rechazada
                 {% endif %}
             </span>
         </div>
@@ -213,53 +250,51 @@
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Usuario</div>
-                        <div class="info-value">{{ suscripcion.usuario.username }}</div>
+                        <div class="info-value">{{ compra.usuario.username }}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Email</div>
-                        <div class="info-value">{{ suscripcion.usuario.email }}</div>
+                        <div class="info-label">Nombre Completo</div>
+                        <div class="info-value">{{ compra.nombre_completo }}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Email en Servicio</div>
-                        <div class="info-value">{{ suscripcion.email_servicio }}</div>
+                        <div class="info-label">Correo</div>
+                        <div class="info-value">{{ compra.correo }}</div>
                     </div>
-                    {% if suscripcion.usuario_servicio %}
                     <div class="info-item">
                         <div class="info-label">Usuario en App</div>
-                        <div class="info-value">{{ suscripcion.usuario_servicio }}</div>
+                        <div class="info-value">{{ compra.nombre_usuario_app }}</div>
+                    </div>
+                    {% if compra.telefono %}
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">{{ compra.telefono }}</div>
                     </div>
                     {% endif %}
-                    <div class="info-item">
-                        <div class="info-label">Puntos Actuales</div>
-                        <div class="info-value">{{ suscripcion.usuario.perfil.puntos_disponibles }} pts</div>
-                    </div>
                 </div>
             </div>
             
-            <!-- Información de la Suscripción -->
+            <!-- Información de la Compra -->
             <div class="info-section">
-                <h4><i class="fas fa-tv"></i> Información de la Suscripción</h4>
+                <h4><i class="fas fa-shopping-cart"></i> Información de la Compra</h4>
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-label">Servicio</div>
-                        <div class="info-value">{{ suscripcion.plan.servicio.nombre }}</div>
+                        <div class="info-value">{{ compra.servicio.nombre }}</div>
                     </div>
+                    {% if compra.plan %}
                     <div class="info-item">
                         <div class="info-label">Plan</div>
-                        <div class="info-value">{{ suscripcion.plan.nombre }}</div>
+                        <div class="info-value">{{ compra.plan.nombre }}</div>
                     </div>
+                    {% endif %}
                     <div class="info-item">
                         <div class="info-label">Monto Pagado</div>
-                        <div class="info-value">${{ suscripcion.monto_pagado|floatformat:2 }}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Método de Pago</div>
-                        <div class="info-value">{{ suscripcion.get_metodo_pago_display }}</div>
+                        <div class="info-value">${{ compra.monto_pagado|floatformat:2 }}</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">Tipo de Compra</div>
                         <div class="info-value">
-                            {% if es_primera_compra %}
+                            {% if compra.es_primera_compra %}
                                 <span style="color: #28a745; font-weight: bold;">
                                     <i class="fas fa-star"></i> Primera Compra
                                 </span>
@@ -271,108 +306,127 @@
                         </div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Puntos a Otorgar</div>
+                        <div class="info-label">Puntos Sugeridos</div>
                         <div class="info-value" style="color: #667eea;">
-                            <i class="fas fa-coins"></i> {{ puntos_sugeridos }} puntos
+                            <i class="fas fa-coins"></i> {{ compra.puntos_sugeridos }} puntos
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Fechas -->
-            <div class="info-section">
-                <h4><i class="fas fa-calendar-alt"></i> Fechas</h4>
-                <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">Fecha de Creación</div>
-                        <div class="info-value">{{ suscripcion.fecha_creacion|date:"d/m/Y H:i" }}</div>
+                        <div class="info-label">Fecha de Compra</div>
+                        <div class="info-value">{{ compra.fecha_compra|date:"d/m/Y" }}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">Fecha de Inicio</div>
-                        <div class="info-value">{{ suscripcion.fecha_inicio|date:"d/m/Y" }}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Fecha de Vencimiento</div>
-                        <div class="info-value">{{ suscripcion.fecha_vencimiento|date:"d/m/Y" }}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Duración</div>
-                        <div class="info-value">{{ suscripcion.plan.get_duracion_dias }} días</div>
+                        <div class="info-label">Fecha de Registro</div>
+                        <div class="info-value">{{ compra.fecha_registro|date:"d/m/Y H:i" }}</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Notas -->
-            {% if suscripcion.notas %}
+            <!-- Descripción -->
+            {% if compra.descripcion %}
             <div class="info-section">
-                <h4><i class="fas fa-sticky-note"></i> Notas</h4>
+                <h4><i class="fas fa-align-left"></i> Descripción</h4>
                 <div class="info-item">
-                    <p style="margin: 0;">{{ suscripcion.notas }}</p>
+                    <p style="margin: 0;">{{ compra.descripcion }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Comprobante -->
+            {% if compra.comprobante %}
+            <div class="info-section">
+                <h4><i class="fas fa-file-image"></i> Comprobante de Pago</h4>
+                <div class="comprobante-section">
+                    <img src="{{ compra.comprobante.url }}" alt="Comprobante">
+                    <br>
+                    <a href="{{ compra.comprobante.url }}" target="_blank" class="btn btn-primary" style="margin-top: 15px;">
+                        <i class="fas fa-download"></i> Descargar Comprobante
+                    </a>
                 </div>
             </div>
             {% endif %}
             
             <!-- Estado actual -->
-            {% if suscripcion.validada %}
+            {% if compra.estado == 'aprobada' %}
             <div class="alert-success-custom">
                 <i class="fas fa-check-circle fa-2x" style="float: left; margin-right: 15px;"></i>
-                <strong>Suscripción validada</strong><br>
-                {% if suscripcion.fecha_validacion %}
-                    Validada el: {{ suscripcion.fecha_validacion|date:"d/m/Y H:i" }}<br>
+                <strong>Compra aprobada</strong><br>
+                Revisado por: {{ compra.revisado_por.username }}<br>
+                Fecha: {{ compra.fecha_revision|date:"d/m/Y H:i" }}<br>
+                Puntos otorgados: {{ compra.puntos_otorgados }}
+                {% if compra.notas_admin %}
+                    <br>Notas: {{ compra.notas_admin }}
                 {% endif %}
-                Estado: {{ suscripcion.get_estado_display }}<br>
-                Puntos otorgados: {{ suscripcion.puntos_otorgados }}
+            </div>
+            {% elif compra.estado == 'rechazada' %}
+            <div class="alert-danger-custom">
+                <i class="fas fa-times-circle fa-2x" style="float: left; margin-right: 15px;"></i>
+                <strong>Compra rechazada</strong><br>
+                Revisado por: {{ compra.revisado_por.username }}<br>
+                Fecha: {{ compra.fecha_revision|date:"d/m/Y H:i" }}<br>
+                {% if compra.notas_admin %}
+                    Motivo: {{ compra.notas_admin }}
+                {% endif %}
             </div>
             {% endif %}
             
             <!-- Acciones (solo si está pendiente) -->
-            {% if not suscripcion.validada %}
+            {% if compra.estado == 'pendiente' %}
             <div class="action-section">
                 <h4 style="color: #333; margin-bottom: 20px;">
-                    <i class="fas fa-tasks"></i> Acciones de Validación
+                    <i class="fas fa-tasks"></i> Acciones
                 </h4>
-                
-                <!-- Información automática -->
-                <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <i class="fas fa-info-circle" style="color: #2196F3; font-size: 1.5rem;"></i>
-                        <div>
-                            <strong style="color: #2196F3;">Detección Automática</strong><br>
-                            <small style="color: #666;">
-                                {% if es_primera_compra %}
-                                    Es la <strong>primera compra</strong> de este usuario en {{ suscripcion.plan.servicio.nombre }}
-                                {% else %}
-                                    Es una <strong>renovación</strong> (ya compró antes en {{ suscripcion.plan.servicio.nombre }})
-                                {% endif %}
-                            </small>
-                        </div>
-                    </div>
-                    <div style="text-align: center; padding: 10px; background: white; border-radius: 5px;">
-                        <div style="font-size: 0.9rem; color: #666;">Puntos que se otorgarán al validar:</div>
-                        <div style="font-size: 2rem; font-weight: bold; color: #667eea;">
-                            {{ puntos_sugeridos }} <small style="font-size: 1rem;">puntos</small>
-                        </div>
-                    </div>
-                </div>
                 
                 <div class="action-buttons">
                     <!-- Aprobar -->
                     <div class="action-form">
                         <h5 style="color: #28a745;">
-                            <i class="fas fa-check-circle"></i> Aprobar Suscripción
+                            <i class="fas fa-check-circle"></i> Aprobar Compra
                         </h5>
+                        
+                        <!-- Información automática -->
+                        <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <i class="fas fa-info-circle" style="color: #2196F3; font-size: 1.5rem;"></i>
+                                <div>
+                                    <strong style="color: #2196F3;">Detección Automática</strong><br>
+                                    <small style="color: #666;">
+                                        {% if compra.es_primera_compra %}
+                                            Es la <strong>primera compra</strong> de este usuario en {{ compra.servicio.nombre }}
+                                        {% else %}
+                                            Es una <strong>renovación</strong> (ya compró antes en {{ compra.servicio.nombre }})
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div style="text-align: center; padding: 10px; background: white; border-radius: 5px;">
+                                <div style="font-size: 0.9rem; color: #666;">Puntos calculados automáticamente:</div>
+                                <div style="font-size: 2rem; font-weight: bold; color: #667eea;">
+                                    {{ compra.puntos_sugeridos }} <small style="font-size: 1rem;">puntos</small>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="accion" value="aprobar">
-                            <input type="hidden" name="puntos" value="{{ puntos_sugeridos }}">
                             
                             <div class="form-group">
-                                <label for="notas">Notas (opcional)</label>
-                                <textarea name="notas" id="notas" class="form-control" rows="3" placeholder="Comentarios adicionales..."></textarea>
+                                <label for="puntos">Puntos a otorgar *</label>
+                                <input type="number" name="puntos" id="puntos" class="form-control" 
+                                       min="0" value="{{ compra.puntos_sugeridos }}" required>
+                                <small style="color: #666;">
+                                    Puedes cambiar los puntos si es necesario. Sugeridos: <strong>{{ compra.puntos_sugeridos }} pts</strong>
+                                </small>
                             </div>
                             
-                            <button type="submit" class="btn-aprobar" onclick="return confirm('¿Estás seguro de aprobar esta suscripción?')">
-                                <i class="fas fa-check"></i> Validar y Activar ({{ puntos_sugeridos }} pts)
+                            <div class="form-group">
+                                <label for="notas_admin">Notas (opcional)</label>
+                                <textarea name="notas_admin" id="notas_admin" class="form-control" rows="3" placeholder="Comentarios adicionales..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn-aprobar" onclick="return confirm('¿Estás seguro de aprobar esta compra?')">
+                                <i class="fas fa-check"></i> Aprobar y Otorgar Puntos
                             </button>
                         </form>
                     </div>
@@ -380,20 +434,20 @@
                     <!-- Rechazar -->
                     <div class="action-form">
                         <h5 style="color: #dc3545;">
-                            <i class="fas fa-times-circle"></i> Rechazar Suscripción
+                            <i class="fas fa-times-circle"></i> Rechazar Compra
                         </h5>
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="accion" value="rechazar">
                             
                             <div class="form-group">
-                                <label for="motivo">Motivo del rechazo *</label>
-                                <textarea name="motivo" id="motivo" class="form-control" rows="4" placeholder="Explica por qué se rechaza esta suscripción..." required></textarea>
+                                <label for="motivo_rechazo">Motivo del rechazo</label>
+                                <textarea name="motivo_rechazo" id="motivo_rechazo" class="form-control" rows="4" placeholder="Explica por qué se rechaza esta compra..." required></textarea>
                                 <small style="color: #666;">El usuario verá este mensaje</small>
                             </div>
                             
-                            <button type="submit" class="btn-rechazar" onclick="return confirm('¿Estás seguro de rechazar esta suscripción?')">
-                                <i class="fas fa-times"></i> Rechazar Suscripción
+                            <button type="submit" class="btn-rechazar" onclick="return confirm('¿Estás seguro de rechazar esta compra?')">
+                                <i class="fas fa-times"></i> Rechazar Compra
                             </button>
                         </form>
                     </div>
@@ -402,7 +456,7 @@
             {% endif %}
             
             <div style="text-align: center;">
-                <a href="{% url 'admin_custom:validar_suscripciones' %}" class="btn-volver">
+                <a href="{% url 'admin_custom:gestionar_compras' %}" class="btn-volver">
                     <i class="fas fa-arrow-left"></i> Volver al Listado
                 </a>
             </div>

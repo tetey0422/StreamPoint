@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Validar Suscripciones - StreamPoint Admin{% endblock %}
+{% block title %}Gestionar Compras - Admin{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -93,7 +93,7 @@
         color: white;
     }
     
-    .suscripciones-table {
+    .compras-table {
         background: white;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -139,14 +139,14 @@
         color: #856404;
     }
     
-    .badge-activa {
+    .badge-aprobada {
         background: #d4edda;
         color: #155724;
     }
     
-    .badge-validada {
-        background: #d1ecf1;
-        color: #0c5460;
+    .badge-rechazada {
+        background: #f8d7da;
+        color: #721c24;
     }
     
     .btn-action {
@@ -203,8 +203,8 @@
 {% block content %}
 <div class="admin-container">
     <div class="page-header">
-        <h1><i class="fas fa-check-double"></i> Validar Suscripciones</h1>
-        <p style="margin: 10px 0 0 0;">Revisa y aprueba las suscripciones de los usuarios</p>
+        <h1><i class="fas fa-shopping-cart"></i> Gestionar Compras Registradas</h1>
+        <p style="margin: 10px 0 0 0;">Revisa y aprueba las compras registradas por los usuarios</p>
     </div>
     
     <!-- Estadísticas -->
@@ -216,16 +216,16 @@
         </div>
         <div class="stat-card">
             <i class="fas fa-check-circle" style="font-size: 2rem; color: #28a745;"></i>
-            <div class="stat-number">{{ stats.validadas }}</div>
-            <div class="stat-label">Validadas</div>
+            <div class="stat-number">{{ stats.aprobadas }}</div>
+            <div class="stat-label">Aprobadas</div>
         </div>
         <div class="stat-card">
-            <i class="fas fa-play-circle" style="font-size: 2rem; color: #667eea;"></i>
-            <div class="stat-number">{{ stats.activas }}</div>
-            <div class="stat-label">Activas</div>
+            <i class="fas fa-times-circle" style="font-size: 2rem; color: #dc3545;"></i>
+            <div class="stat-number">{{ stats.rechazadas }}</div>
+            <div class="stat-label">Rechazadas</div>
         </div>
         <div class="stat-card">
-            <i class="fas fa-list" style="font-size: 2rem; color: #6c757d;"></i>
+            <i class="fas fa-list" style="font-size: 2rem; color: #667eea;"></i>
             <div class="stat-number">{{ stats.total }}</div>
             <div class="stat-label">Total</div>
         </div>
@@ -240,8 +240,11 @@
             <a href="?estado=pendiente" class="filter-btn {% if estado_filtro == 'pendiente' %}active{% endif %}">
                 <i class="fas fa-clock"></i> Pendientes
             </a>
-            <a href="?estado=validadas" class="filter-btn {% if estado_filtro == 'validadas' %}active{% endif %}">
-                <i class="fas fa-check-circle"></i> Validadas
+            <a href="?estado=aprobada" class="filter-btn {% if estado_filtro == 'aprobada' %}active{% endif %}">
+                <i class="fas fa-check-circle"></i> Aprobadas
+            </a>
+            <a href="?estado=rechazada" class="filter-btn {% if estado_filtro == 'rechazada' %}active{% endif %}">
+                <i class="fas fa-times-circle"></i> Rechazadas
             </a>
             <a href="?estado=todas" class="filter-btn {% if estado_filtro == 'todas' %}active{% endif %}">
                 <i class="fas fa-list"></i> Todas
@@ -249,40 +252,44 @@
         </div>
     </div>
     
-    <!-- Tabla de suscripciones -->
-    {% if suscripciones %}
-    <div class="suscripciones-table">
+    <!-- Tabla de compras -->
+    {% if compras %}
+    <div class="compras-table">
         <table class="table">
             <thead>
                 <tr>
                     <th>Usuario</th>
                     <th>Servicio</th>
                     <th>Monto</th>
-                    <th>Fecha Inicio</th>
-                    <th>Vencimiento</th>
+                    <th>Fecha Compra</th>
+                    <th>Fecha Registro</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for suscripcion in suscripciones %}
+                {% for compra in compras %}
                 <tr>
                     <td>
                         <div class="user-info">
                             <div class="user-avatar">
-                                {{ suscripcion.usuario.username|slice:":1"|upper }}
+                                {{ compra.usuario.username|slice:":1"|upper }}
                             </div>
                             <div>
-                                <strong>{{ suscripcion.usuario.username }}</strong><br>
-                                <small style="color: #666;">{{ suscripcion.usuario.email }}</small>
+                                <strong>{{ compra.usuario.username }}</strong><br>
+                                <small style="color: #666;">{{ compra.nombre_completo }}</small>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <strong>{{ suscripcion.plan.servicio.nombre }}</strong><br>
-                        <small style="color: #666;">{{ suscripcion.plan.nombre }}</small>
+                        <strong>{{ compra.servicio.nombre }}</strong><br>
+                        {% if compra.plan %}
+                            <small style="color: #666;">{{ compra.plan.nombre }}</small>
+                        {% else %}
+                            <small style="color: #999;">Sin plan específico</small>
+                        {% endif %}
                         <br>
-                        {% if suscripcion.es_primera_compra %}
+                        {% if compra.es_primera_compra %}
                             <small style="color: #28a745; font-weight: 600;">
                                 <i class="fas fa-star"></i> Primera compra
                             </small>
@@ -293,39 +300,31 @@
                         {% endif %}
                     </td>
                     <td>
-                        <strong>${{ suscripcion.monto_pagado|floatformat:2 }}</strong>
-                        <br>
-                        <small style="color: #667eea;">
-                            <i class="fas fa-coins"></i>
-                            {% if suscripcion.es_primera_compra %}
-                                {{ suscripcion.plan.puntos_primera_compra }}
-                            {% else %}
-                                {{ suscripcion.plan.puntos_renovacion }}
-                            {% endif %}
-                            pts
-                        </small>
-                    </td>
-                    <td>{{ suscripcion.fecha_inicio|date:"d/m/Y" }}</td>
-                    <td>{{ suscripcion.fecha_vencimiento|date:"d/m/Y" }}</td>
-                    <td>
-                        {% if suscripcion.validada %}
-                            <span class="badge-estado badge-validada">
-                                <i class="fas fa-check"></i> Validada
-                            </span>
-                            <br>
-                            {% if suscripcion.estado == 'activa' %}
-                                <span class="badge-estado badge-activa" style="margin-top: 5px;">
-                                    <i class="fas fa-play"></i> Activa
-                                </span>
-                            {% endif %}
-                        {% else %}
-                            <span class="badge-estado badge-pendiente">
-                                <i class="fas fa-clock"></i> Pendiente
-                            </span>
+                        <strong>${{ compra.monto_pagado|floatformat:2 }}</strong>
+                        {% if compra.estado == 'pendiente' %}
+                            <br><small style="color: #667eea;">
+                                <i class="fas fa-coins"></i> {{ compra.puntos_sugeridos }} pts sugeridos
+                            </small>
                         {% endif %}
                     </td>
+                    <td>{{ compra.fecha_compra|date:"d/m/Y" }}</td>
+                    <td>{{ compra.fecha_registro|date:"d/m/Y H:i" }}</td>
                     <td>
-                        <a href="{% url 'admin_custom:validar_suscripcion_accion' suscripcion.id %}" class="btn-action btn-ver">
+                        <span class="badge-estado badge-{{ compra.estado }}">
+                            {% if compra.estado == 'pendiente' %}
+                                <i class="fas fa-clock"></i> Pendiente
+                            {% elif compra.estado == 'aprobada' %}
+                                <i class="fas fa-check-circle"></i> Aprobada
+                                {% if compra.puntos_otorgados %}
+                                    <br><small>({{ compra.puntos_otorgados }} pts)</small>
+                                {% endif %}
+                            {% elif compra.estado == 'rechazada' %}
+                                <i class="fas fa-times-circle"></i> Rechazada
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_custom:detalle_compra_admin' compra.id %}" class="btn-action btn-ver">
                             <i class="fas fa-eye"></i> Ver Detalle
                         </a>
                     </td>
@@ -335,63 +334,13 @@
         </table>
     </div>
     {% else %}
-    <div class="suscripciones-table">
+    <div class="compras-table">
         <div class="empty-state">
             <i class="fas fa-inbox"></i>
-            <h3 style="color: #666;">No hay suscripciones {{ estado_filtro }}s</h3>
-            <p style="color: #999;">No se encontraron suscripciones con este estado.</p>
+            <h3 style="color: #666;">No hay compras {{ estado_filtro }}s</h3>
+            <p style="color: #999;">Los usuarios aún no han registrado compras con este estado.</p>
         </div>
     </div>
     {% endif %}
 </div>
-{% endblock %}
-
-                    <!-- Puntos a otorgar -->
-                    <div class="alert alert-warning py-2 mb-3">
-                        <small class="mb-0">
-                            <i class="fas fa-star me-1"></i>
-                            {% if suscripcion.es_primera_compra %}
-                                <strong>Primera compra:</strong> {{ suscripcion.plan.puntos_primera_compra }} puntos
-                            {% else %}
-                                <strong>Renovación:</strong> {{ suscripcion.plan.puntos_renovacion }} puntos
-                            {% endif %}
-                        </small>
-                    </div>
-
-                    {% if suscripcion.notas %}
-                    <div class="mb-3">
-                        <small class="text-muted">
-                            <strong>Notas:</strong><br>
-                            {{ suscripcion.notas }}
-                        </small>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="card-footer bg-transparent">
-                    <a href="{% url 'admin_custom:validar_suscripcion_accion' suscripcion.id %}" 
-                       class="btn btn-primary-custom w-100">
-                        <i class="fas fa-edit me-2"></i>Revisar y Decidir
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <!-- Estado vacío -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card-custom text-center p-5">
-                <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--success); margin-bottom: 20px;"></i>
-                <h3 class="text-success mb-3">¡Todo al día!</h3>
-                <p class="text-muted mb-4">
-                    No hay suscripciones pendientes de validación en este momento
-                </p>
-                <a href="{% url 'admin_custom:dashboard' %}" class="btn btn-primary-custom">
-                    <i class="fas fa-tachometer-alt me-2"></i>Volver al Dashboard
-                </a>
-            </div>
-        </div>
-    </div>
-{% endif %}
 {% endblock %}

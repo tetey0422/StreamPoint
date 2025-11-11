@@ -2,7 +2,7 @@
 # core_user/admin.py
 # ============================================
 from django.contrib import admin
-from .models import PerfilUsuario, Suscripcion, TransaccionPuntos
+from .models import PerfilUsuario, Suscripcion, TransaccionPuntos, RegistroCompra
 from django.utils import timezone
 
 @admin.register(PerfilUsuario)
@@ -48,5 +48,25 @@ class TransaccionPuntosAdmin(admin.ModelAdmin):
     list_filter = ['tipo', 'fecha']
     search_fields = ['perfil__user__username', 'descripcion']
     readonly_fields = ['fecha']
-    date_hierarchy = 'fecha'
+
+
+@admin.register(RegistroCompra)
+class RegistroCompraAdmin(admin.ModelAdmin):
+    list_display = ['id', 'usuario', 'servicio', 'monto_pagado', 'estado', 'fecha_compra', 'fecha_registro', 'puntos_otorgados']
+    list_filter = ['estado', 'servicio', 'fecha_compra', 'fecha_registro']
+    search_fields = ['usuario__username', 'nombre_completo', 'correo', 'nombre_usuario_app']
+    readonly_fields = ['fecha_registro', 'fecha_revision']
+    
+    fieldsets = (
+        ('Información del Usuario', {
+            'fields': ('usuario', 'nombre_completo', 'correo', 'nombre_usuario_app', 'telefono')
+        }),
+        ('Información de la Compra', {
+            'fields': ('servicio', 'plan', 'monto_pagado', 'fecha_compra', 'comprobante', 'descripcion')
+        }),
+        ('Estado y Revisión', {
+            'fields': ('estado', 'fecha_registro', 'fecha_revision', 'revisado_por', 'puntos_otorgados', 'notas_admin')
+        }),
+    )
+
 

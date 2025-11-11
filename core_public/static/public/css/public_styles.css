@@ -66,7 +66,7 @@
 .card.border-primary {
     border-width: 3px !important;
     position: relative;
-    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
 }
 
 .card.border-primary::before {
@@ -76,7 +76,7 @@
     left: 0;
     right: 0;
     height: 5px;
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 15px 15px 0 0;
 }
 
@@ -101,7 +101,7 @@
 
 /* Íconos de categoría con colores */
 .category-icon.bg-gradient-primary {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     width: 80px;
     height: 80px;
     display: inline-flex;
@@ -291,10 +291,30 @@
    CATÁLOGO - ESTILOS AVANZADOS
    ============================================ */
 .catalog-header {
-    background: var(--gradient-primary);
-    padding: 60px 0;
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.98) 100%);
+    padding: 60px 0 80px 0;
     border-radius: 0 0 50px 50px;
     margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.catalog-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.catalog-header > * {
+    position: relative;
+    z-index: 1;
 }
 
 .search-bar-fancy {
@@ -304,11 +324,24 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
+.search-bar-fancy .fa-search {
+    color: #667eea !important;
+    font-size: 1.2rem;
+}
+
 .search-bar-fancy input {
     border: none;
     outline: none;
     background: transparent;
     padding: 10px 20px;
+    color: #000000 !important;
+    font-weight: 600 !important;
+    font-size: 1rem;
+}
+
+.search-bar-fancy input::placeholder {
+    color: #666 !important;
+    font-weight: 500;
 }
 
 .search-bar-fancy button {
@@ -320,40 +353,56 @@
     display: inline-block;
     padding: 12px 30px;
     border-radius: 50px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: rgba(102, 126, 234, 0.15);
+    color: rgba(255, 255, 255, 0.95);
     margin: 5px;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
+    border: 2px solid rgba(102, 126, 234, 0.3);
     cursor: pointer;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .category-pill:hover,
 .category-pill.active {
-    background: white;
-    color: var(--primary-color);
-    border-color: white;
+    background: rgba(102, 126, 234, 0.3);
+    color: white;
+    border-color: rgba(102, 126, 234, 0.6);
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 .service-card-enhanced {
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: none;
+    border: 1px solid rgba(102, 126, 234, 0.2);
     border-radius: 20px;
     overflow: hidden;
-    background: white;
+    background: #1f1f1f !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.service-card-enhanced .card-title {
+    color: #e8e8e8 !important;
+}
+
+.service-card-enhanced .card-body .text-muted {
+    color: #808080 !important;
+}
+
+.service-card-enhanced .card-body small {
+    color: #808080 !important;
 }
 
 .service-card-enhanced:hover {
     transform: translateY(-15px) rotate(2deg);
-    box-shadow: 0 20px 50px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5);
+    border-color: #6366f1;
 }
 
 .service-logo-container {
     position: relative;
     height: 200px;
-    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.1), rgba(226, 232, 240, 0.05));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -365,7 +414,7 @@
     position: absolute;
     width: 200%;
     height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+    background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
     animation: shimmer 3s infinite;
 }
 
@@ -402,24 +451,46 @@
 }
 
 .info-section-fancy {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 30px;
-    padding: 40px;
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.98) 100%);
+    border-radius: 50px;
+    padding: 50px 40px;
     color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.info-section-fancy::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.info-section-fancy > * {
+    position: relative;
+    z-index: 1;
 }
 
 .stat-box {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 30px;
     text-align: center;
     transition: all 0.3s ease;
+    border: 1px solid rgba(102, 126, 234, 0.2);
 }
 
 .stat-box:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     transform: scale(1.05);
+    border-color: rgba(102, 126, 234, 0.4);
 }
 
 .stat-box h2 {
@@ -444,13 +515,18 @@
 }
 
 .service-card-featured {
+    background: #1f1f1f !important;
+    border: 1px solid rgba(102, 126, 234, 0.2);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
 .service-card-featured:hover {
     transform: translateY(-15px) scale(1.05);
-    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.5);
+    border-color: rgba(102, 126, 234, 0.5);
 }
 
 .step-number {
@@ -464,8 +540,8 @@
     font-weight: bold;
     color: white;
     margin-bottom: 20px;
-    background: var(--gradient-primary);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
 }
 
 .hero-image-float {
@@ -476,10 +552,32 @@
    INFORMACIÓN PROYECTO - ESTILOS ADICIONALES
    ============================================ */
 .hero-project {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgba(25, 25, 35, 0.95) 0%, rgba(15, 15, 25, 0.98) 100%);
     color: white;
-    padding: 100px 0;
+    padding: 100px 0 120px 0;
     text-align: center;
+    border-radius: 0 0 50px 50px;
+    margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.hero-project::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-project > * {
+    position: relative;
+    z-index: 1;
 }
 
 .section-card {
