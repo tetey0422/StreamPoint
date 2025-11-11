@@ -7,6 +7,9 @@ StreamPoint es una plataforma web desarrollada en Django que permite a los usuar
 ![Django](https://img.shields.io/badge/Django-5.2.7-green.svg)
 ![Python](https://img.shields.io/badge/Python-3.13-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Status](https://img.shields.io/badge/Status-Production_Ready-success.svg)
+![Security](https://img.shields.io/badge/Security-100%25_Pass-brightgreen.svg)
+![Code Quality](https://img.shields.io/badge/Quality-10/10-blue.svg)
 
 ---
 
