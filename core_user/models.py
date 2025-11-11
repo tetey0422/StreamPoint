@@ -1,9 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from datetime import timedelta
 from core_public.models import PlanSuscripcion
 from decimal import Decimal
+
+
+def validate_file_size(value):
+    """Valida que el archivo no supere los 5MB"""
+    filesize = value.size
+    if filesize > 5 * 1024 * 1024:  # 5MB en bytes
+        raise ValidationError("El archivo no puede ser mayor a 5MB. Por favor, comprima la imagen o use un archivo más pequeño.")
+    return value
 
 
 class PerfilUsuario(models.Model):
@@ -94,6 +104,12 @@ class Suscripcion(models.Model):
     class Meta:
         verbose_name_plural = "Suscripciones"
         ordering = ['-fecha_creacion']
+        indexes = [
+            models.Index(fields=['usuario', 'estado']),
+            models.Index(fields=['fecha_vencimiento']),
+            models.Index(fields=['-fecha_creacion']),
+            models.Index(fields=['validada', 'estado']),
+        ]
     
     def __str__(self):
         return f"{self.usuario.username} - {self.plan.servicio.nombre}"
@@ -279,10 +295,17 @@ class RegistroCompra(models.Model):
     )
     fecha_compra = models.DateField(help_text="Fecha en que realizó la compra")
     comprobante = models.FileField(
-        upload_to='comprobantes/',
+        upload_to='comprobantes/%Y/%m/',
         blank=True,
         null=True,
-        help_text="Captura de pantalla o comprobante de pago (opcional)"
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'webp'],
+                message="Solo se permiten archivos PDF, JPG, JPEG, PNG o WEBP"
+            ),
+            validate_file_size
+        ],
+        help_text="Comprobante de pago en formato PDF o imagen (JPG, PNG). Máximo 5MB"
     )
     descripcion = models.TextField(
         blank=True,
@@ -326,6 +349,12 @@ class RegistroCompra(models.Model):
         verbose_name = "Registro de Compra"
         verbose_name_plural = "Registros de Compras"
         ordering = ['-fecha_registro']
+        indexes = [
+            models.Index(fields=['usuario', 'estado']),
+            models.Index(fields=['estado', '-fecha_registro']),
+            models.Index(fields=['servicio', 'usuario']),
+            models.Index(fields=['-fecha_registro']),
+        ]
     
     def __str__(self):
         return f"{self.usuario.username} - {self.servicio.nombre} - {self.get_estado_display()}"

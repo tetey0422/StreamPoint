@@ -12,6 +12,10 @@ from .models import Suscripcion, PerfilUsuario, Factura, RegistroCompra
 from .forms import RegistroCompraForm
 from core_public.models import PlanSuscripcion, ConfiguracionRecompensa
 from core_admin.models import CorreoVerificado
+import logging
+
+# Configurar logger para esta app
+logger = logging.getLogger(__name__)
 
 
 def registro(request):
@@ -25,9 +29,11 @@ def registro(request):
                 perfil, created = PerfilUsuario.objects.get_or_create(user=user)
                 login(request, user)
                 messages.success(request, f'¡Bienvenido {user.username}! Tu cuenta ha sido creada exitosamente.')
+                logger.info(f'Nuevo usuario registrado: {user.username}')
                 return redirect('user:dashboard')
             except Exception as e:
-                messages.error(request, f'Error al crear la cuenta: {str(e)}')
+                logger.error(f'Error al crear cuenta para usuario: {str(e)}', exc_info=True)
+                messages.error(request, 'Ocurrió un error al crear tu cuenta. Por favor, intenta nuevamente o contacta al soporte.')
         else:
             if form.errors:
                 for field, errors in form.errors.items():
@@ -50,28 +56,36 @@ def cerrar_sesion(request):
 @login_required
 def dashboard(request):
     """Dashboard del usuario con sus suscripciones y puntos"""
-    perfil, created = PerfilUsuario.objects.get_or_create(user=request.user)
-    if created:
-        messages.info(request, 'Tu perfil ha sido creado exitosamente.')
-    
-    suscripciones_activas = Suscripcion.objects.filter(
-        usuario=request.user,
-        estado='activa'
-    )
-    suscripciones_pendientes = Suscripcion.objects.filter(
-        usuario=request.user,
-        estado='pendiente'
-    )
-    
-    historial_puntos = perfil.transacciones.all()[:10]
-    
-    context = {
-        'perfil': perfil,
-        'suscripciones_activas': suscripciones_activas,
-        'suscripciones_pendientes': suscripciones_pendientes,
-        'historial_puntos': historial_puntos,
-    }
-    return render(request, 'user/dashboard.html', context)
+    try:
+        perfil, created = PerfilUsuario.objects.get_or_create(user=request.user)
+        if created:
+            logger.info(f'Perfil creado para usuario: {request.user.username}')
+            messages.info(request, 'Tu perfil ha sido creado exitosamente.')
+        
+        # Optimización: usar select_related para evitar N+1 queries
+        suscripciones_activas = Suscripcion.objects.filter(
+            usuario=request.user,
+            estado='activa'
+        ).select_related('plan__servicio')
+        
+        suscripciones_pendientes = Suscripcion.objects.filter(
+            usuario=request.user,
+            estado='pendiente'
+        ).select_related('plan__servicio')
+        
+        historial_puntos = perfil.transacciones.all()[:10]
+        
+        context = {
+            'perfil': perfil,
+            'suscripciones_activas': suscripciones_activas,
+            'suscripciones_pendientes': suscripciones_pendientes,
+            'historial_puntos': historial_puntos,
+        }
+        return render(request, 'user/dashboard.html', context)
+    except Exception as e:
+        logger.error(f'Error en dashboard para usuario {request.user.username}: {str(e)}', exc_info=True)
+        messages.error(request, 'Ocurrió un error al cargar tu dashboard. Por favor, intenta nuevamente.')
+        return redirect('public:index')
 
 
 @login_required
@@ -410,14 +424,27 @@ def registrar_compra(request):
 def mis_registros_compra(request):
     """
     Listado de compras registradas por el usuario.
+    Optimizado con select_related para evitar N+1 queries.
     """
-    registros = RegistroCompra.objects.filter(usuario=request.user)
-    
-    context = {
-        'registros': registros,
-        'titulo': 'Mis Compras Registradas'
-    }
-    return render(request, 'user/mis_registros_compra.html', context)
+    try:
+        # Optimización: cargar relaciones de servicio y plan en una sola query
+        registros = RegistroCompra.objects.filter(
+            usuario=request.user
+        ).select_related(
+            'servicio',
+            'plan',
+            'revisado_por'
+        ).order_by('-fecha_registro')
+        
+        context = {
+            'registros': registros,
+            'titulo': 'Mis Compras Registradas'
+        }
+        return render(request, 'user/mis_registros_compra.html', context)
+    except Exception as e:
+        logger.error(f'Error al cargar registros de compra para {request.user.username}: {str(e)}', exc_info=True)
+        messages.error(request, 'Ocurrió un error al cargar tus compras. Por favor, intenta nuevamente.')
+        return redirect('user:dashboard')
 
 
 @login_required

@@ -10,6 +10,7 @@ build/
 
 # Django
 *.log
+logs/
 db.sqlite3
 db.sqlite3-journal
 /media
@@ -36,7 +37,14 @@ Thumbs.db
 # Archivos de configuración sensibles
 *.env
 .env
+.env.local
+.env.production
 secrets.py
 
 # Archivos de notas personales
 nota.txt
+*.txt.bak
+
+# Archivos de respaldo
+*.bak
+*.backup
