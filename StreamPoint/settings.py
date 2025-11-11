@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-import secrets
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,16 +23,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
-    if os.environ.get('DEBUG', 'True') == 'True':
-        # Solo para desarrollo - genera una clave única cada vez
-        SECRET_KEY = 'dev-secret-key-only-for-development-' + secrets.token_urlsafe(32)
+    # Para desarrollo: guardar SECRET_KEY en archivo .secret
+    SECRET_FILE = BASE_DIR / '.secret'
+    if SECRET_FILE.exists():
+        SECRET_KEY = SECRET_FILE.read_text().strip()
     else:
-        raise ValueError("SECRET_KEY must be set in production environment!")
+        # Generar nueva clave y guardarla
+        from django.core.management.utils import get_random_secret_key
+        SECRET_KEY = get_random_secret_key()
+        SECRET_FILE.write_text(SECRET_KEY)
+        print(f"[OK] Nueva SECRET_KEY generada y guardada en {SECRET_FILE}")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [
+    host.strip() 
+    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()  # Evita strings vacíos
+]
+
+# Validación para producción
+if not DEBUG and set(ALLOWED_HOSTS) == {'localhost', '127.0.0.1'}:
+    raise ValueError(
+        "⚠️ ALLOWED_HOSTS debe configurarse para producción!\n"
+        "Configura la variable de entorno ALLOWED_HOSTS con tu dominio."
+    )
 
 
 # Application definition
@@ -84,12 +99,29 @@ WSGI_APPLICATION = 'StreamPoint.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Configuración dinámica de base de datos
+DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
+
+if DB_ENGINE == 'django.db.backends.sqlite3':
+    # SQLite para desarrollo
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # PostgreSQL u otra base de datos para producción
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': os.environ.get('DB_NAME', 'streampoint_db'),
+            'USER': os.environ.get('DB_USER', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
 
 
 # Password validation
@@ -215,6 +247,14 @@ LOGGING = {
             'backupCount': 5,
             'formatter': 'verbose',
         },
+        'security_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'security.log',
+            'maxBytes': 1024 * 1024 * 10,  # 10MB
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django': {
@@ -225,6 +265,11 @@ LOGGING = {
         'django.request': {
             'handlers': ['error_file'],
             'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['security_file', 'console'],
+            'level': 'WARNING',
             'propagate': False,
         },
         'core_user': {

@@ -6,6 +6,8 @@ from django.core.validators import FileExtensionValidator
 from datetime import timedelta
 from core_public.models import PlanSuscripcion
 from decimal import Decimal
+from PIL import Image
+import io
 
 
 def validate_file_size(value):
@@ -13,6 +15,55 @@ def validate_file_size(value):
     filesize = value.size
     if filesize > 5 * 1024 * 1024:  # 5MB en bytes
         raise ValidationError("El archivo no puede ser mayor a 5MB. Por favor, comprima la imagen o use un archivo más pequeño.")
+    return value
+
+
+def validate_file_content(value):
+    """Valida el contenido real del archivo, no solo la extensión"""
+    # Leer los primeros bytes para detectar el tipo MIME
+    value.seek(0)
+    header = value.read(512)
+    value.seek(0)
+    
+    # Detectar tipo de archivo por magic numbers
+    if header.startswith(b'%PDF'):
+        # Es un PDF válido
+        return value
+    elif header.startswith(b'\xff\xd8\xff'):
+        # Es JPEG - validar que sea imagen válida
+        try:
+            img = Image.open(value)
+            img.verify()
+            value.seek(0)
+            return value
+        except Exception:
+            raise ValidationError("El archivo JPEG está corrupto o no es una imagen válida")
+    elif header.startswith(b'\x89PNG\r\n\x1a\n'):
+        # Es PNG - validar que sea imagen válida
+        try:
+            img = Image.open(value)
+            img.verify()
+            value.seek(0)
+            return value
+        except Exception:
+            raise ValidationError("El archivo PNG está corrupto o no es una imagen válida")
+    elif header.startswith(b'RIFF') and b'WEBP' in header[:20]:
+        # Es WEBP - validar que sea imagen válida
+        try:
+            img = Image.open(value)
+            img.verify()
+            value.seek(0)
+            return value
+        except Exception:
+            raise ValidationError("El archivo WEBP está corrupto o no es una imagen válida")
+    else:
+        raise ValidationError("Tipo de archivo no permitido. Solo se aceptan PDF, JPG, PNG o WEBP válidos.")
+
+
+def validate_file_size_and_content(value):
+    """Validador combinado de tamaño y contenido"""
+    validate_file_size(value)
+    validate_file_content(value)
     return value
 
 
@@ -303,7 +354,7 @@ class RegistroCompra(models.Model):
                 allowed_extensions=['pdf', 'jpg', 'jpeg', 'png', 'webp'],
                 message="Solo se permiten archivos PDF, JPG, JPEG, PNG o WEBP"
             ),
-            validate_file_size
+            validate_file_size_and_content
         ],
         help_text="Comprobante de pago en formato PDF o imagen (JPG, PNG). Máximo 5MB"
     )
