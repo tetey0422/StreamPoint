@@ -60,6 +60,12 @@
         color: var(--netflix-white);
     }
     
+    .form-control[readonly] {
+        background-color: rgba(255, 255, 255, 0.05);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    
     .help-text {
         font-size: 0.85rem;
         color: var(--netflix-light-gray);
@@ -319,7 +325,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>{{ form.fecha_compra.label }} <span class="required-mark">*</span></label>
+                        <label>{{ form.fecha_compra.label }} {% if not pagar_con_puntos %}<span class="required-mark">*</span>{% endif %}</label>
                         {{ form.fecha_compra }}
                         {% if form.fecha_compra.help_text %}
                             <small class="help-text">{{ form.fecha_compra.help_text }}</small>
@@ -371,18 +377,43 @@
 
 {% block extra_js %}
 <script>
+    // Datos de planes por servicio (desde el backend)
+    const planesData = {{ planes_data_json|safe }};
+    
     // Cargar planes cuando se selecciona un servicio
     document.getElementById('id_servicio').addEventListener('change', function() {
         const servicioId = this.value;
         const planSelect = document.getElementById('id_plan');
+        const montoInput = document.getElementById('id_monto_pagado');
         
-        if (servicioId) {
-            // Aquí puedes agregar AJAX para cargar planes específicos del servicio
-            // Por ahora, solo habilitamos el campo
+        // Limpiar el select de planes
+        planSelect.innerHTML = '<option value="">Selecciona un plan (opcional)</option>';
+        montoInput.value = '';
+        
+        if (servicioId && planesData[servicioId]) {
+            // Agregar planes del servicio seleccionado
+            planesData[servicioId].forEach(plan => {
+                const option = document.createElement('option');
+                option.value = plan.id;
+                option.textContent = `${plan.nombre} - $${plan.precio.toLocaleString('es-CO', {minimumFractionDigits: 2, maximumFractionDigits: 2})} COP`;
+                option.dataset.precio = plan.precio;
+                planSelect.appendChild(option);
+            });
             planSelect.disabled = false;
         } else {
             planSelect.disabled = true;
-            planSelect.innerHTML = '<option value="">Selecciona un plan (opcional)</option>';
+        }
+    });
+    
+    // Actualizar monto cuando se selecciona un plan
+    document.getElementById('id_plan').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const montoInput = document.getElementById('id_monto_pagado');
+        
+        if (selectedOption.dataset.precio) {
+            montoInput.value = parseFloat(selectedOption.dataset.precio).toFixed(2);
+        } else {
+            montoInput.value = '';
         }
     });
     
@@ -408,7 +439,16 @@
     if (telefonoInput) {
         telefonoInput.addEventListener('blur', function() {
             const telefono = this.value;
-            const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');
+            
+            // Verificar que no contenga el signo menos
+            if (telefono.includes('-')) {
+                this.classList.add('is-invalid');
+                showError(this, 'El número no puede contener el signo menos. Usa + para códigos de país. Ej: +57 300 123 4567');
+                return;
+            }
+            
+            // Limpiar espacios y paréntesis para validación
+            const telefonoLimpio = telefono.replace(/[\s\(\)]/g, '');
             const telefonoRegex = /^\+?[0-9]{7,15}$/;
             
             if (telefono && !telefonoRegex.test(telefonoLimpio)) {

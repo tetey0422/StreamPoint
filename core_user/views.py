@@ -381,6 +381,11 @@ def registrar_compra(request):
             
             # Si es pago con puntos, procesar automáticamente
             if pagar_con_puntos:
+                # Establecer fecha actual si no está definida
+                from datetime import date
+                if not registro.fecha_compra:
+                    registro.fecha_compra = date.today()
+                
                 try:
                     # Verificar que el usuario tenga puntos suficientes
                     perfil = PerfilUsuario.objects.get(user=request.user)
@@ -484,10 +489,25 @@ def registrar_compra(request):
         
         form = RegistroCompraForm(initial=initial_data, user=request.user, pagar_con_puntos=pagar_con_puntos)
     
+    # Obtener todos los planes agrupados por servicio para JavaScript
+    from core_public.models import PlanSuscripcion
+    import json
+    planes_data = {}
+    for plan in PlanSuscripcion.objects.filter(activo=True).select_related('servicio'):
+        servicio_id = str(plan.servicio.id)
+        if servicio_id not in planes_data:
+            planes_data[servicio_id] = []
+        planes_data[servicio_id].append({
+            'id': plan.id,
+            'nombre': plan.nombre,
+            'precio': float(plan.precio)
+        })
+    
     context = {
         'form': form,
         'titulo': 'Pagar con Puntos' if pagar_con_puntos else 'Registrar Compra',
         'pagar_con_puntos': pagar_con_puntos,
+        'planes_data_json': json.dumps(planes_data),
     }
     return render(request, 'user/registrar_compra.html', context)
 

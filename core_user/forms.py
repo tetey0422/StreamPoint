@@ -45,7 +45,7 @@ class RegistroCompraForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '+57 300 123 4567',
                 'required': 'required',
-                'pattern': r'[\+]?[0-9\s\-\(\)]{7,20}'
+                'pattern': r'[\+]?[0-9\s\(\)]{7,20}'
             }),
             'servicio': forms.Select(attrs={
                 'class': 'form-control',
@@ -59,7 +59,8 @@ class RegistroCompraForm(forms.ModelForm):
                 'placeholder': '0.00',
                 'step': '0.01',
                 'required': 'required',
-                'min': '0.01'
+                'min': '0.01',
+                'readonly': 'readonly'
             }),
             'fecha_compra': forms.DateInput(attrs={
                 'class': 'form-control',
@@ -84,7 +85,7 @@ class RegistroCompraForm(forms.ModelForm):
             'telefono': 'Teléfono',
             'servicio': 'Servicio de streaming',
             'plan': 'Plan adquirido (opcional)',
-            'monto_pagado': 'Monto pagado ($)',
+            'monto_pagado': 'Monto a pagar ($)',
             'fecha_compra': 'Fecha de compra',
             'comprobante': 'Comprobante de pago',
             'descripcion': 'Descripción adicional (opcional)'
@@ -94,7 +95,8 @@ class RegistroCompraForm(forms.ModelForm):
             'comprobante': 'Sube una captura de pantalla o foto del comprobante de pago (OBLIGATORIO)',
             'plan': 'Si conoces el plan específico, selecciónalo. De lo contrario, déjalo vacío.',
             'correo': 'Ingresa un correo electrónico válido',
-            'telefono': 'Ingresa un número de teléfono válido (Ej: +57 300 123 4567 o 3001234567)'
+            'telefono': 'Ingresa un número de teléfono válido (Ej: +57 300 123 4567 o 3001234567)',
+            'monto_pagado': 'El monto se actualiza automáticamente según el plan seleccionado'
         }
     
     def __init__(self, *args, **kwargs):
@@ -117,11 +119,20 @@ class RegistroCompraForm(forms.ModelForm):
         # Hacer campos opcionales
         self.fields['descripcion'].required = False
         
-        # Si es pago con puntos, el comprobante NO es necesario
+        # Si es pago con puntos, configuraciones especiales
         if pagar_con_puntos:
+            # Comprobante NO es necesario
             self.fields['comprobante'].required = False
             self.fields['comprobante'].widget.attrs.pop('required', None)
             self.fields['comprobante'].help_text = 'No es necesario subir comprobante para pagos con puntos'
+            
+            # Fecha automática (fecha actual)
+            from datetime import date
+            self.initial['fecha_compra'] = date.today()
+            self.fields['fecha_compra'].widget.attrs['readonly'] = 'readonly'
+            self.fields['fecha_compra'].widget.attrs.pop('required', None)
+            self.fields['fecha_compra'].required = False
+            self.fields['fecha_compra'].help_text = 'La fecha se establece automáticamente al momento del pago'
         else:
             # Hacer el comprobante OBLIGATORIO para pagos normales
             self.fields['comprobante'].required = True
@@ -144,10 +155,17 @@ class RegistroCompraForm(forms.ModelForm):
         """Validar que el teléfono tenga formato válido"""
         telefono = self.cleaned_data.get('telefono')
         if telefono:
-            # Eliminar espacios, guiones y paréntesis
-            telefono_limpio = re.sub(r'[\s\-\(\)]', '', telefono)
+            # Verificar que no contenga caracteres inválidos como signos negativos
+            if '-' in telefono.replace(' ', '').replace('(', '').replace(')', ''):
+                raise forms.ValidationError(
+                    'El número de teléfono no puede contener el signo menos. '
+                    'Usa el signo + para códigos de país. Ejemplo: +57 300 123 4567'
+                )
             
-            # Validar que contenga solo números y opcionalmente el símbolo +
+            # Eliminar espacios, guiones (entre números) y paréntesis para validación
+            telefono_limpio = re.sub(r'[\s\(\)]', '', telefono)
+            
+            # Validar que contenga solo números y opcionalmente el símbolo + al inicio
             if not re.match(r'^\+?[0-9]{7,15}$', telefono_limpio):
                 raise forms.ValidationError(
                     'Ingresa un número de teléfono válido. '
