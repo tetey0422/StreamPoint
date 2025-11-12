@@ -153,6 +153,23 @@
     .form-control::placeholder {
         color: var(--netflix-light-gray);
     }
+    
+    .invalid-feedback {
+        color: #e74c3c;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    .form-control.is-invalid {
+        border-color: #e74c3c;
+        background-color: rgba(231, 76, 60, 0.05);
+    }
+    
+    .form-control.is-invalid:focus {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+    }
 </style>
 {% endblock %}
 
@@ -160,20 +177,46 @@
 <div class="container">
     <div class="form-card">
         <div class="form-header">
-            <h2><i class="fas fa-shopping-cart"></i> {{ titulo }}</h2>
-            <p>Registra tu compra y el administrador te otorgará puntos</p>
+            <h2>
+                {% if pagar_con_puntos %}
+                    <i class="fas fa-coins"></i> {{ titulo }}
+                {% else %}
+                    <i class="fas fa-shopping-cart"></i> {{ titulo }}
+                {% endif %}
+            </h2>
+            {% if pagar_con_puntos %}
+                <p>Completa los datos para procesar tu pago con puntos</p>
+            {% else %}
+                <p>Registra tu compra y el administrador te otorgará puntos</p>
+            {% endif %}
         </div>
         
+        {% if pagar_con_puntos %}
+        <div class="alert alert-warning border-0 mb-4" style="background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24 !important;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-coins" style="font-size: 2rem; color: #fbbf24; margin-right: 15px;"></i>
+                <div>
+                    <h5 class="text-white mb-2">
+                        <strong>Pago con Puntos</strong>
+                    </h5>
+                    <p class="text-light mb-0">
+                        No necesitas subir comprobante de pago. Los puntos se descontarán automáticamente al confirmar la compra.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <div class="info-box">
             <i class="fas fa-info-circle"></i>
             <strong>¿Cómo funciona?</strong>
             <ul style="margin-top: 10px; margin-bottom: 0;">
                 <li>Completa el formulario con los datos de tu compra</li>
-                <li>Opcionalmente, adjunta un comprobante de pago</li>
+                <li><strong>Adjunta el comprobante de pago (obligatorio)</strong></li>
                 <li>El administrador revisará tu compra</li>
                 <li>Una vez aprobada, recibirás tus puntos automáticamente</li>
             </ul>
         </div>
+        {% endif %}
         
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -224,7 +267,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>{{ form.telefono.label }}</label>
+                        <label>{{ form.telefono.label }} <span class="required-mark">*</span></label>
                         {{ form.telefono }}
                         {% if form.telefono.help_text %}
                             <small class="help-text">{{ form.telefono.help_text }}</small>
@@ -286,14 +329,16 @@
                 </div>
             </div>
             
+            {% if not pagar_con_puntos %}
             <div class="form-group">
-                <label>{{ form.comprobante.label }}</label>
+                <label>{{ form.comprobante.label }} <span class="required-mark">*</span></label>
                 {{ form.comprobante }}
                 {% if form.comprobante.help_text %}
                     <small class="help-text">{{ form.comprobante.help_text }}</small>
                 {% endif %}
                 {{ form.comprobante.errors }}
             </div>
+            {% endif %}
             
             <div class="form-group">
                 <label>{{ form.descripcion.label }}</label>
@@ -304,8 +349,16 @@
                 {{ form.descripcion.errors }}
             </div>
             
+            {% if pagar_con_puntos %}
+            <input type="hidden" name="pagar_con_puntos" value="true">
+            {% endif %}
+            
             <button type="submit" class="btn btn-submit">
-                <i class="fas fa-paper-plane"></i> Registrar Compra
+                {% if pagar_con_puntos %}
+                    <i class="fas fa-coins"></i> Confirmar Pago con Puntos
+                {% else %}
+                    <i class="fas fa-paper-plane"></i> Registrar Compra
+                {% endif %}
             </button>
             
             <a href="{% url 'user:dashboard' %}" class="btn btn-cancel">
@@ -332,5 +385,134 @@
             planSelect.innerHTML = '<option value="">Selecciona un plan (opcional)</option>';
         }
     });
+    
+    // Validación del correo electrónico
+    const correoInput = document.getElementById('id_correo');
+    if (correoInput) {
+        correoInput.addEventListener('blur', function() {
+            const email = this.value;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            
+            if (email && !emailRegex.test(email)) {
+                this.classList.add('is-invalid');
+                showError(this, 'Por favor, ingresa un correo electrónico válido');
+            } else {
+                this.classList.remove('is-invalid');
+                removeError(this);
+            }
+        });
+    }
+    
+    // Validación del teléfono
+    const telefonoInput = document.getElementById('id_telefono');
+    if (telefonoInput) {
+        telefonoInput.addEventListener('blur', function() {
+            const telefono = this.value;
+            const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');
+            const telefonoRegex = /^\+?[0-9]{7,15}$/;
+            
+            if (telefono && !telefonoRegex.test(telefonoLimpio)) {
+                this.classList.add('is-invalid');
+                showError(this, 'Ingresa un teléfono válido (7-15 dígitos). Ej: +57 300 123 4567');
+            } else {
+                this.classList.remove('is-invalid');
+                removeError(this);
+            }
+        });
+    }
+    
+    // Validación del comprobante
+    const comprobanteInput = document.getElementById('id_comprobante');
+    if (comprobanteInput) {
+        comprobanteInput.addEventListener('change', function() {
+            const file = this.files[0];
+            
+            if (file) {
+                // Validar tamaño (5MB máximo)
+                if (file.size > 5 * 1024 * 1024) {
+                    this.value = '';
+                    this.classList.add('is-invalid');
+                    showError(this, 'El archivo no debe superar los 5MB');
+                    return;
+                }
+                
+                // Validar tipo de archivo
+                const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.webp'];
+                const fileName = file.name.toLowerCase();
+                const isValid = validExtensions.some(ext => fileName.endsWith(ext));
+                
+                if (!isValid) {
+                    this.value = '';
+                    this.classList.add('is-invalid');
+                    showError(this, 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP) o PDF');
+                    return;
+                }
+                
+                this.classList.remove('is-invalid');
+                removeError(this);
+            }
+        });
+    }
+    
+    // Funciones auxiliares para mostrar/ocultar errores
+    function showError(input, message) {
+        removeError(input);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'invalid-feedback';
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = message;
+        input.parentNode.appendChild(errorDiv);
+    }
+    
+    function removeError(input) {
+        const existingError = input.parentNode.querySelector('.invalid-feedback');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+    
+    // Validación del formulario antes de enviar
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const comprobante = document.getElementById('id_comprobante');
+            const correo = document.getElementById('id_correo');
+            const telefono = document.getElementById('id_telefono');
+            
+            let isValid = true;
+            
+            // Verificar comprobante
+            if (!comprobante.files || comprobante.files.length === 0) {
+                e.preventDefault();
+                comprobante.classList.add('is-invalid');
+                showError(comprobante, 'El comprobante de pago es obligatorio');
+                isValid = false;
+            }
+            
+            // Verificar correo
+            if (!correo.value || !correo.checkValidity()) {
+                e.preventDefault();
+                correo.classList.add('is-invalid');
+                showError(correo, 'Debes ingresar un correo electrónico válido');
+                isValid = false;
+            }
+            
+            // Verificar teléfono
+            if (!telefono.value) {
+                e.preventDefault();
+                telefono.classList.add('is-invalid');
+                showError(telefono, 'El teléfono es obligatorio');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                // Scroll al primer error
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    }
 </script>
 {% endblock %}

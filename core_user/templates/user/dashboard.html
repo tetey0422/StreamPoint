@@ -55,6 +55,41 @@
     </div>
 </div>
 
+<!-- 🎯 NUEVO: Planes que puedes pagar con puntos -->
+{% if perfil.puntos_disponibles > 0 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom p-4" style="border: 2px solid #fbbf24; background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, rgba(245, 158, 11, 0.05) 100%);">
+            <h5 class="mb-3" style="color: #fbbf24;">
+                <i class="fas fa-coins me-2"></i>¡Planes Disponibles con tus Puntos!
+            </h5>
+            <p class="text-light mb-3">
+                Con tus <strong>{{ perfil.puntos_disponibles }} puntos</strong>, puedes adquirir los siguientes planes sin gastar dinero:
+            </p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <a href="{% url 'public:catalogo' %}" 
+                       class="btn w-100 py-3" 
+                       style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #000; font-weight: 600; font-size: 1.1rem;">
+                        <i class="fas fa-search me-2"></i>Ver Planes Disponibles
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-center p-3" style="background: rgba(0,0,0,0.3); border-radius: 10px;">
+                        <small class="text-muted d-block mb-1">Valor equivalente</small>
+                        <h4 class="text-warning mb-0">{{ perfil.puntos_disponibles|puntos_a_pesos }} COP</h4>
+                    </div>
+                </div>
+            </div>
+            <small class="text-muted d-block mt-3">
+                <i class="fas fa-info-circle me-1"></i>
+                Los planes que puedes pagar con puntos están marcados con un badge dorado en el catálogo
+            </small>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Acciones Rápidas -->
 <div class="row mb-4">
     <div class="col-12">

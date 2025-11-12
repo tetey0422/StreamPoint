@@ -97,7 +97,8 @@
 
 {% if planes %}
 <div class="row g-4 mb-5">
-    {% for plan in planes %}
+    {% for plan_info in planes_con_info %}
+    {% with plan=plan_info.plan %}
     <div class="col-md-6 col-lg-4">
         <div class="card h-100 service-card {% if forloop.counter == 2 %}border-primary{% endif %}">
             <!-- Badge de Plan Recomendado -->
@@ -109,7 +110,22 @@
             </div>
             {% endif %}
             
-            <div class="card-body p-4">
+            <!-- Badge de Pago con Puntos -->
+            {% if plan_info.puede_pagar_con_puntos %}
+            <div class="position-absolute top-0 start-0 m-3">
+                <span class="badge" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); font-size: 0.85rem; padding: 8px 12px;">
+                    <i class="fas fa-coins me-1"></i>¡Puedes pagarlo con puntos!
+                </span>
+            </div>
+            {% elif user.is_authenticated and config %}
+            <div class="position-absolute top-0 start-0 m-3">
+                <span class="badge bg-secondary" style="font-size: 0.75rem; padding: 6px 10px;">
+                    <i class="fas fa-info-circle me-1"></i>Te faltan {{ plan_info.puntos_faltantes }} pts
+                </span>
+            </div>
+            {% endif %}
+            
+            <div class="card-body p-4" style="margin-top: {% if plan_info.puede_pagar_con_puntos %}35px{% else %}0{% endif %};">
                 <!-- Header del Plan -->
                 <div class="text-center mb-4">
                     <h4 class="card-title mb-3" style="color: var(--primary-color); font-weight: 600;">{{ plan.nombre }}</h4>
@@ -117,6 +133,15 @@
                         ${{ plan.precio|floatformat:0 }}
                     </div>
                     <small class="text-muted fw-semibold" style="color: rgba(255,255,255,0.75) !important; font-size: 0.95rem;">COP / {{ plan.get_duracion_display }}</small>
+                    
+                    <!-- Info de puntos necesarios -->
+                    {% if user.is_authenticated and config %}
+                    <div class="mt-2">
+                        <small class="badge" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; font-size: 0.8rem;">
+                            <i class="fas fa-coins me-1"></i>{{ plan_info.puntos_necesarios }} puntos para pago completo
+                        </small>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <!-- Características del Plan -->
@@ -164,9 +189,28 @@
 
                 <!-- Botón de Acción -->
                 {% if user.is_authenticated %}
-                <a href="{% url 'user:registrar_compra' %}?servicio={{ servicio.id }}&plan={{ plan.id }}" class="btn btn-primary-custom w-100">
-                    <i class="fas fa-shopping-cart me-2"></i>Comprar Plan
-                </a>
+                    {% if plan_info.puede_pagar_con_puntos %}
+                    <!-- Opción 1: Pagar con Puntos -->
+                    <a href="{% url 'user:registrar_compra' %}?servicio={{ servicio.id }}&plan={{ plan.id }}&pagar_con_puntos=true" 
+                       class="btn w-100 mb-2" 
+                       style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #000; font-weight: 600;">
+                        <i class="fas fa-coins me-2"></i>¡Pagar con Puntos!
+                    </a>
+                    <small class="d-block text-center mb-2" style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">
+                        Tienes {{ puntos_disponibles }} pts | Necesitas {{ plan_info.puntos_necesarios }} pts
+                    </small>
+                    
+                    <!-- Opción 2: Pago Normal -->
+                    <a href="{% url 'user:registrar_compra' %}?servicio={{ servicio.id }}&plan={{ plan.id }}" 
+                       class="btn btn-outline-custom w-100" 
+                       style="font-size: 0.9rem; padding: 8px;">
+                        <i class="fas fa-shopping-cart me-1"></i>O registrar compra normal
+                    </a>
+                    {% else %}
+                    <a href="{% url 'user:registrar_compra' %}?servicio={{ servicio.id }}&plan={{ plan.id }}" class="btn btn-primary-custom w-100">
+                        <i class="fas fa-shopping-cart me-2"></i>Registrar compra
+                    </a>
+                    {% endif %}
                 {% else %}
                 <a href="{% url 'user:login' %}?next={{ request.path }}" class="btn btn-primary-custom w-100">
                     <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión para comprar
@@ -175,6 +219,7 @@
             </div>
         </div>
     </div>
+    {% endwith %}
     {% endfor %}
 </div>
 {% else %}

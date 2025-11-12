@@ -368,21 +368,92 @@ def registrar_compra(request):
     """
     Formulario para que los usuarios registren sus compras manualmente.
     El admin las revisa y aprueba para otorgar puntos.
+    Si pagar_con_puntos=true, procesa el pago automáticamente con puntos.
     """
+    pagar_con_puntos = request.GET.get('pagar_con_puntos') == 'true' or request.POST.get('pagar_con_puntos') == 'true'
+    
     if request.method == 'POST':
-        form = RegistroCompraForm(request.POST, request.FILES, user=request.user)
+        form = RegistroCompraForm(request.POST, request.FILES, user=request.user, pagar_con_puntos=pagar_con_puntos)
         
         if form.is_valid():
             registro = form.save(commit=False)
             registro.usuario = request.user
-            registro.save()
             
-            messages.success(
-                request,
-                '¡Compra registrada exitosamente! '
-                'El administrador la revisará pronto y te otorgará tus puntos.'
-            )
-            return redirect('user:mis_registros_compra')
+            # Si es pago con puntos, procesar automáticamente
+            if pagar_con_puntos:
+                try:
+                    # Verificar que el usuario tenga puntos suficientes
+                    perfil = PerfilUsuario.objects.get(user=request.user)
+                    config = ConfiguracionRecompensa.objects.filter(activo=True).first()
+                    
+                    if not config:
+                        messages.error(request, 'Error en la configuración del sistema de puntos.')
+                        return redirect('user:registrar_compra')
+                    
+                    puntos_necesarios = int(registro.monto_pagado * config.puntos_por_peso)
+                    
+                    if perfil.puntos_disponibles < puntos_necesarios:
+                        messages.error(
+                            request,
+                            f'No tienes suficientes puntos. Necesitas {puntos_necesarios} puntos pero solo tienes {perfil.puntos_disponibles}.'
+                        )
+                        return redirect('user:registrar_compra')
+                    
+                    # Descontar puntos
+                    perfil.usar_puntos(
+                        puntos_necesarios,
+                        f"Pago con puntos - {registro.servicio.nombre} - {registro.plan.nombre if registro.plan else 'Plan personalizado'}"
+                    )
+                    
+                    # Marcar como aprobada automáticamente
+                    registro.estado = 'aprobada'
+                    registro.puntos_otorgados = 0  # No otorga puntos adicionales porque pagó con puntos
+                    registro.notas_admin = 'Pago procesado automáticamente con puntos.'
+                    registro.save()
+                    
+                    # Crear la suscripción activa
+                    if registro.plan:
+                        from datetime import timedelta
+                        from django.utils import timezone
+                        
+                        # El modelo Suscripcion calcula automáticamente fecha_vencimiento en save()
+                        Suscripcion.objects.create(
+                            usuario=request.user,
+                            plan=registro.plan,
+                            fecha_inicio=timezone.now().date(),
+                            estado='activa',
+                            validada=True,
+                            metodo_pago='puntos',
+                            monto_pagado=registro.monto_pagado,
+                            email_servicio=registro.correo,
+                            usuario_servicio=registro.nombre_usuario_app,
+                            puntos_otorgados=0,
+                            es_primera_compra=registro.es_primera_compra,
+                            notas=f'Pago procesado automáticamente con {puntos_necesarios} puntos.'
+                        )
+                    
+                    messages.success(
+                        request,
+                        f'¡Pago exitoso! Se descontaron {puntos_necesarios} puntos. Tu suscripción está activa.'
+                    )
+                    return redirect('user:dashboard')
+                    
+                except PerfilUsuario.DoesNotExist:
+                    messages.error(request, 'Error al procesar el pago. Perfil no encontrado.')
+                    return redirect('user:registrar_compra')
+                except Exception as e:
+                    messages.error(request, f'Error al procesar el pago: {str(e)}')
+                    return redirect('user:registrar_compra')
+            else:
+                # Proceso normal - requiere aprobación del admin
+                registro.save()
+                
+                messages.success(
+                    request,
+                    '¡Compra registrada exitosamente! '
+                    'El administrador la revisará pronto y te otorgará tus puntos.'
+                )
+                return redirect('user:mis_registros_compra')
         else:
             messages.error(request, 'Por favor, corrige los errores del formulario.')
     else:
@@ -411,11 +482,12 @@ def registrar_compra(request):
             except:
                 pass
         
-        form = RegistroCompraForm(initial=initial_data, user=request.user)
+        form = RegistroCompraForm(initial=initial_data, user=request.user, pagar_con_puntos=pagar_con_puntos)
     
     context = {
         'form': form,
-        'titulo': 'Registrar Compra'
+        'titulo': 'Pagar con Puntos' if pagar_con_puntos else 'Registrar Compra',
+        'pagar_con_puntos': pagar_con_puntos,
     }
     return render(request, 'user/registrar_compra.html', context)
 

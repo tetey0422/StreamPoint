@@ -32,16 +32,18 @@
     }
     
     .stat-card {
-        background: white;
+        background: var(--netflix-dark-gray);
         border-radius: 10px;
         padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         text-align: center;
         transition: transform 0.3s;
+        border: 1px solid rgba(102, 126, 234, 0.2);
     }
     
     .stat-card:hover {
         transform: translateY(-5px);
+        border-color: rgba(102, 126, 234, 0.5);
     }
     
     .stat-number {
@@ -52,17 +54,18 @@
     }
     
     .stat-label {
-        color: #666;
+        color: var(--netflix-light-gray);
         font-size: 0.9rem;
         text-transform: uppercase;
     }
     
     .filter-section {
-        background: white;
+        background: var(--netflix-dark-gray);
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         margin-bottom: 20px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
     }
     
     .filter-buttons {
@@ -75,7 +78,7 @@
         padding: 10px 20px;
         border: 2px solid #667eea;
         border-radius: 20px;
-        background: white;
+        background: transparent;
         color: #667eea;
         text-decoration: none;
         font-weight: 600;
@@ -94,18 +97,20 @@
     }
     
     .suscripciones-table {
-        background: white;
+        background: var(--netflix-dark-gray);
         border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         overflow: hidden;
+        border: 1px solid rgba(102, 126, 234, 0.2);
     }
     
     .table {
         margin: 0;
+        color: var(--netflix-text);
     }
     
     .table thead {
-        background: #f8f9fa;
+        background: rgba(0,0,0,0.3);
     }
     
     .table th {
@@ -120,11 +125,12 @@
     .table td {
         padding: 15px;
         vertical-align: middle;
-        border-top: 1px solid #f0f0f0;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        color: var(--netflix-white);
     }
     
     .table tbody tr:hover {
-        background: #f8f9fa;
+        background: rgba(102, 126, 234, 0.1);
     }
     
     .badge-estado {
@@ -135,18 +141,21 @@
     }
     
     .badge-pendiente {
-        background: #fff3cd;
-        color: #856404;
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+        border: 1px solid #fbbf24;
     }
     
     .badge-activa {
-        background: #d4edda;
-        color: #155724;
+        background: rgba(70, 211, 105, 0.2);
+        color: #46d369;
+        border: 1px solid #46d369;
     }
     
     .badge-validada {
-        background: #d1ecf1;
-        color: #0c5460;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid #667eea;
     }
     
     .btn-action {
@@ -176,7 +185,7 @@
     
     .empty-state i {
         font-size: 5rem;
-        color: #ccc;
+        color: var(--netflix-light-gray);
         margin-bottom: 20px;
     }
     
@@ -233,7 +242,7 @@
     
     <!-- Filtros -->
     <div class="filter-section">
-        <h5 style="margin-bottom: 15px; color: #333;">
+        <h5 style="margin-bottom: 15px; color:  var(--netflix-white);">
             <i class="fas fa-filter"></i> Filtrar por estado:
         </h5>
         <div class="filter-buttons">
@@ -274,16 +283,16 @@
                             </div>
                             <div>
                                 <strong>{{ suscripcion.usuario.username }}</strong><br>
-                                <small style="color: #666;">{{ suscripcion.usuario.email }}</small>
+                                <small style="color: var(--netflix-light-gray);">{{ suscripcion.usuario.email }}</small>
                             </div>
                         </div>
                     </td>
                     <td>
                         <strong>{{ suscripcion.plan.servicio.nombre }}</strong><br>
-                        <small style="color: #666;">{{ suscripcion.plan.nombre }}</small>
+                        <small style="color: var(--netflix-light-gray);">{{ suscripcion.plan.nombre }}</small>
                         <br>
                         {% if suscripcion.es_primera_compra %}
-                            <small style="color: #28a745; font-weight: 600;">
+                            <small style="color: #46d369; font-weight: 600;">
                                 <i class="fas fa-star"></i> Primera compra
                             </small>
                         {% else %}
@@ -338,60 +347,10 @@
     <div class="suscripciones-table">
         <div class="empty-state">
             <i class="fas fa-inbox"></i>
-            <h3 style="color: #666;">No hay suscripciones {{ estado_filtro }}s</h3>
-            <p style="color: #999;">No se encontraron suscripciones con este estado.</p>
+            <h3 style="color: var(--netflix-light-gray);">No hay suscripciones {{ estado_filtro }}s</h3>
+            <p style="color: var(--netflix-light-gray);">No se encontraron suscripciones con este estado.</p>
         </div>
     </div>
     {% endif %}
 </div>
-{% endblock %}
-
-                    <!-- Puntos a otorgar -->
-                    <div class="alert alert-warning py-2 mb-3">
-                        <small class="mb-0">
-                            <i class="fas fa-star me-1"></i>
-                            {% if suscripcion.es_primera_compra %}
-                                <strong>Primera compra:</strong> {{ suscripcion.plan.puntos_primera_compra }} puntos
-                            {% else %}
-                                <strong>Renovación:</strong> {{ suscripcion.plan.puntos_renovacion }} puntos
-                            {% endif %}
-                        </small>
-                    </div>
-
-                    {% if suscripcion.notas %}
-                    <div class="mb-3">
-                        <small class="text-muted">
-                            <strong>Notas:</strong><br>
-                            {{ suscripcion.notas }}
-                        </small>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="card-footer bg-transparent">
-                    <a href="{% url 'admin_custom:validar_suscripcion_accion' suscripcion.id %}" 
-                       class="btn btn-primary-custom w-100">
-                        <i class="fas fa-edit me-2"></i>Revisar y Decidir
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <!-- Estado vacío -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card-custom text-center p-5">
-                <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--success); margin-bottom: 20px;"></i>
-                <h3 class="text-success mb-3">¡Todo al día!</h3>
-                <p class="text-muted mb-4">
-                    No hay suscripciones pendientes de validación en este momento
-                </p>
-                <a href="{% url 'admin_custom:dashboard' %}" class="btn btn-primary-custom">
-                    <i class="fas fa-tachometer-alt me-2"></i>Volver al Dashboard
-                </a>
-            </div>
-        </div>
-    </div>
-{% endif %}
 {% endblock %}

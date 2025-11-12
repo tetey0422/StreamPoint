@@ -41,9 +41,43 @@ def detalle_servicio(request, servicio_id):
     servicio = get_object_or_404(ServicioStreaming, id=servicio_id, activo=True)
     planes = servicio.planes.filter(activo=True)
     
+    # Obtener puntos del usuario y configuración
+    puntos_disponibles = 0
+    config = None
+    if request.user.is_authenticated:
+        from core_user.models import PerfilUsuario
+        from .models import ConfiguracionRecompensa
+        try:
+            perfil = PerfilUsuario.objects.get(user=request.user)
+            puntos_disponibles = perfil.puntos_disponibles
+            config = ConfiguracionRecompensa.objects.filter(activo=True).first()
+        except PerfilUsuario.DoesNotExist:
+            pass
+    
+    # Calcular para cada plan si puede pagarse con puntos
+    planes_con_info = []
+    for plan in planes:
+        plan_info = {
+            'plan': plan,
+            'puede_pagar_con_puntos': False,
+            'puntos_necesarios': 0,
+            'puntos_faltantes': 0,
+        }
+        
+        if config:
+            puntos_necesarios = int(plan.precio * config.puntos_por_peso)
+            plan_info['puntos_necesarios'] = puntos_necesarios
+            plan_info['puede_pagar_con_puntos'] = puntos_disponibles >= puntos_necesarios
+            plan_info['puntos_faltantes'] = max(0, puntos_necesarios - puntos_disponibles)
+        
+        planes_con_info.append(plan_info)
+    
     context = {
         'servicio': servicio,
         'planes': planes,
+        'planes_con_info': planes_con_info,
+        'puntos_disponibles': puntos_disponibles,
+        'config': config,
     }
     return render(request, 'public/detalle_servicio.html', context)
 

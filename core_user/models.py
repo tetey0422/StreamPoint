@@ -110,6 +110,10 @@ class PerfilUsuario(models.Model):
             )
             return True
         return False
+    
+    def usar_puntos(self, cantidad, descripcion=""):
+        """Alias de canjear_puntos para usar puntos"""
+        return self.canjear_puntos(cantidad, descripcion)
 
 
 class Suscripcion(models.Model):
@@ -432,49 +436,52 @@ class RegistroCompra(models.Model):
             
             self.es_primera_compra = not (compras_anteriores or suscripciones_anteriores)
             
-            # Calcular puntos sugeridos según el plan
-            if self.plan:
-                if self.es_primera_compra:
-                    self.puntos_sugeridos = self.plan.puntos_primera_compra
+            # Calcular puntos sugeridos basándose en el monto pagado
+            from core_public.models import ConfiguracionRecompensa
+            try:
+                config = ConfiguracionRecompensa.objects.filter(activo=True).first()
+                if config and self.monto_pagado:
+                    # Calcular puntos basándose en el monto pagado
+                    # Ejemplo: $100,000 × 10 puntos/peso = 1,000,000 puntos
+                    self.puntos_sugeridos = int(self.monto_pagado * config.puntos_por_peso)
                 else:
-                    self.puntos_sugeridos = self.plan.puntos_renovacion
-            else:
-                # Si no hay plan específico, usar valores por defecto
-                from core_public.models import ConfiguracionRecompensa
-                try:
-                    config = ConfiguracionRecompensa.objects.first()
-                    if config:
+                    # Fallback: usar valores del plan o por defecto
+                    if self.plan:
                         if self.es_primera_compra:
-                            self.puntos_sugeridos = config.puntos_primera_compra
+                            self.puntos_sugeridos = self.plan.puntos_primera_compra
                         else:
-                            self.puntos_sugeridos = config.puntos_renovacion
-                except:
-                    # Valores por defecto si no hay configuración
-                    self.puntos_sugeridos = 100 if self.es_primera_compra else 50
+                            self.puntos_sugeridos = self.plan.puntos_renovacion
+                    else:
+                        self.puntos_sugeridos = 100 if self.es_primera_compra else 50
+            except:
+                # Valores por defecto si no hay configuración
+                self.puntos_sugeridos = 100 if self.es_primera_compra else 50
         
         super().save(*args, **kwargs)
     
     def calcular_puntos_automaticos(self):
         """
         Calcula los puntos que deberían otorgarse automáticamente
+        basándose en el monto pagado y la configuración de puntos por peso.
         """
+        from core_public.models import ConfiguracionRecompensa
+        
+        try:
+            config = ConfiguracionRecompensa.objects.filter(activo=True).first()
+            if config and self.monto_pagado:
+                # Calcular puntos basándose en el monto pagado
+                # Ejemplo: $100,000 × 10 puntos/peso = 1,000,000 puntos
+                puntos_calculados = int(self.monto_pagado * config.puntos_por_peso)
+                return puntos_calculados
+        except:
+            pass
+        
+        # Fallback: Si hay plan, usar sus valores fijos
         if self.plan:
             if self.es_primera_compra:
                 return self.plan.puntos_primera_compra
             else:
                 return self.plan.puntos_renovacion
-        else:
-            # Si no hay plan, usar configuración global
-            from core_public.models import ConfiguracionRecompensa
-            try:
-                config = ConfiguracionRecompensa.objects.first()
-                if config:
-                    if self.es_primera_compra:
-                        return config.puntos_primera_compra
-                    else:
-                        return config.puntos_renovacion
-            except:
-                pass
         
         # Valores por defecto
         return 100 if self.es_primera_compra else 50
